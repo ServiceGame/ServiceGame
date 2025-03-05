@@ -193,7 +193,7 @@ MainTab:CreateToggle({
 local Divider = MainTab:CreateDivider()
 local Paragraph = MainTab:CreateParagraph({
 	Title = "Visual",
-	Content = "this is Visual "
+	Content = "this is ESP"
 })
 local Section = MainTab:CreateSection("Esp")
 
