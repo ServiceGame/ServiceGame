@@ -573,11 +573,11 @@ local function v43(v93)
     end
 end
 local v44 = v9:CreateTab('Main', 4483362458);
-local v45 = v9:CreateTab("📝 Responses");
-local v46 = v45:CreateSection("✉️ Message System");
+local v45 = v9:CreateTab("Responses");
+local v46 = v45:CreateSection("Message System");
 v44:CreateSection('Main Controls');
 local v47 = v44:CreateToggle({
-    Name = 'ESP Highlight(Turn On/Off To function Porperly)',
+    Name = 'ESP Highlight (Turn On/Off To function Porperly)',
     CurrentValue = false,
     Flag = 'ESPToggle',
     Callback = function(v96)
@@ -674,7 +674,7 @@ local v47 = v44:CreateToggle({
     end
 });
 local v48 = v44:CreateToggle({
-    Name = 'Auto Kill NPCs(Its a lil bugged)',
+    Name = 'Auto Kill NPCs (Its a lil bugged)',
     CurrentValue = false,
     Flag = 'AutoKillEnabled',
     Callback = function(v97)
@@ -750,7 +750,7 @@ local v50 = v44:CreateSlider({
     end
 });
 local v51 = v44:CreateToggle({
-    Name = 'God Mode(chief kiss)',
+    Name = 'God Mode (chief kiss)',
     CurrentValue = false,
     Flag = 'GodModeEnabled',
     Callback = function(v101)
@@ -773,7 +773,7 @@ local v51 = v44:CreateToggle({
     end
 });
 v44:CreateButton({
-    Name = 'Kill All NPCs(Lil Bugged, but works)',
+    Name = 'Kill All NPCs (Lil Bugged, but works)',
     Callback = function()
         local v103 = 0;
         local v104;
