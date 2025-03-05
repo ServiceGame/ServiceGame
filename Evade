@@ -62,17 +62,17 @@ local PlayTAS = function()
 end
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-	Name = "♥VHNS♥ | ★NovaX x LunaPhs★",
+	Name = "ServiceGame - ♥Evade♥",
 	Icon = 0,
-	LoadingTitle = "♥VHNS♥ On Top♥",
-	LoadingSubtitle = "★Made by NovaX x LunaPhs★",
+	LoadingTitle = "ServiceGame on TOP",
+	LoadingSubtitle = "★Made by Wibu★",
 	Theme = "Default",
 	DisableRayfieldPrompts = false,
 	DisableBuildWarnings = false,
 	ConfigurationSaving = {
 		Enabled = true,
-		FolderName = "VHNS Config", 
-		FileName = "VHNS.json"
+		FolderName = "Wibu Config", 
+		FileName = "Wibu.json"
 	},
 	Discord = {
 		Enabled = false,
@@ -225,7 +225,7 @@ MainTab:CreateToggle({
 })
 local Paragraph = lTab:CreateParagraph({
 	Title = "Local Player v1.0",
-	Content = "Walk Speed and Flying"
+	Content = "Walk Speed"
 })
 local Divider = lTab:CreateDivider()
 
@@ -306,8 +306,8 @@ local Keybind = EmoteTab:CreateKeybind({
 
 
 Rayfield:Notify({
-	Title = "★ VHNS ★ ★ Evade ★",
-	Content = "★ VHNS Script Hub / Evade ★",
+	Title = "★ ServiceGame ★ ★ Evade ★",
+	Content = "★ SG Script Hub / Evade ★",
 	Duration = 5,
 	Image = 10734966248
 })
