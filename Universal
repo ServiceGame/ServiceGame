@@ -153,9 +153,16 @@ local Button = MainTab:CreateButton({
 })
 
 local Button2 = MainTab:CreateButton({
-   Name = "DeadRails - CRACK NO KEY",
+   Name = "DeadRails - Crack (NO KEY)",
    Callback = function()
    loadstring(game:HttpGet('https://raw.githubusercontent.com/thientnn/Script/refs/heads/main/main.lua'))()
+   end,
+})
+
+local Button3 = MainTab:CreateButton({
+   Name = "Ro-Ghoul - Best (NO KEY)",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/PorryDepTrai/exploit/main/DashBoostSolora.lua"))()
    end,
 })
 
