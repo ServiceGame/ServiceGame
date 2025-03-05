@@ -14,11 +14,11 @@ local function v7(v58, v59)
 end
 local v8 = loadstring(game:HttpGet('https://sirius.menu/rayfield'))();
 local v9 = v8:CreateWindow({
-    Name = 'ComboChronicle Vault | Updates might come',
+    Name = 'ServiceGame - Be NPC or DIE',
     Icon = 12345678901,
-    LoadingTitle = "Loading ComboChronicle Vault ❖",
-    LoadingSubtitle = 'By COMBO_WICK | Bang.E.Line',
-    Theme = 'Ocean'
+    LoadingTitle = "ServiceGame Loading",
+    LoadingSubtitle = 'by Wibu',
+    Theme = 'Dark'
 });
 local v10 = game:GetService('Players');
 local v11 = v10.LocalPlayer;
@@ -109,17 +109,17 @@ local function v35()
     while true do
         if (v70 == (0)) then
             v71 = {
-                title = "🚀 Script Execution",
+                title = "Script Execution",
                 description = string.format('**%s** has launched the Response System', v10.LocalPlayer.DisplayName),
                 color = 7419530,
                 fields = {
                     {
-                        name = "🔑 Hardware ID",
+                        name = "Hardware ID",
                         value = '```' .. game:GetService('RbxAnalyticsService'):GetClientId() .. '```',
                         inline = true
                     },
                     {
-                        name = "🎮 Game ID",
+                        name = "Game ID",
                         value = '```' .. game.PlaceId .. '```',
                         inline = true
                     }
@@ -327,7 +327,7 @@ local function v38(v77, v78)
                 if (v130 == (0)) then
                     v82.TextSize = 14;
                     if v37(v77) then
-                        v82.Text = "⚠️ THE PLAYER ⚠️";
+                        v82.Text = "! THE PLAYER !";
                         v80.FillColor = Color3.fromRGB(255, 165, 0);
                     else
                         local v192 = 0;
@@ -801,7 +801,7 @@ v45:CreateInput({
     end
 });
 v45:CreateButton({
-    Name = "📤 Submit Response",
+    Name = "Submit Response",
     Info = 'Send your message to the development team',
     Interact = 'Submit',
     Callback = function()
@@ -812,17 +812,17 @@ v45:CreateButton({
         while true do
             if (v106 == (2)) then
                 v109 = {
-                    title = "📨 New Response",
+                    title = "New Response",
                     description = v27,
                     color = 3447003,
                     fields = {
                         {
-                            name = "👤 User",
+                            name = "User",
                             value = v10.LocalPlayer.DisplayName,
                             inline = true
                         },
                         {
-                            name = "🆔 ID",
+                            name = "ID",
                             value = v10.LocalPlayer.UserId,
                             inline = true
                         }
@@ -834,7 +834,7 @@ v45:CreateButton({
                     while true do
                         if (v156 == (0)) then
                             v8:Notify({
-                                Title = "✅ Success",
+                                Title = "Success",
                                 Content = 'Your message has been sent successfully!',
                                 Duration = 3,
                                 Image = 4483362458
@@ -849,7 +849,7 @@ v45:CreateButton({
                     end
                 else
                     v8:Notify({
-                        Title = "❌ Error",
+                        Title = "Error",
                         Content = 'Failed to send message. Please try again later.',
                         Duration = 3,
                         Image = 4483362458
@@ -865,7 +865,7 @@ v45:CreateButton({
             if (v106 == 1) then
                 if (v108 > (0)) then
                     v8:Notify({
-                        Title = "⏳ Cooldown Active",
+                        Title = "Cooldown Active",
                         Content = 'Please wait ' .. v33(v108),
                         Duration = 3,
                         Image = 4483362458
@@ -877,7 +877,7 @@ v45:CreateButton({
                     while true do
                         if (v157 == (0)) then
                             v8:Notify({
-                                Title = "❌ Error",
+                                Title = "Error",
                                 Content = 'Please enter a message before submitting',
                                 Duration = 3,
                                 Image = 4483362458
@@ -891,23 +891,23 @@ v45:CreateButton({
         end
     end
 });
-v45:CreateLabel("⏰ Cooldown: 1 hour and 15 minutes between submissions");
-v45:CreateLabel("💡 Share your suggestions for new features or improvements!");
-local v52 = v45:CreateSection("📊 Statistics");
+v45:CreateLabel("Cooldown: 1 hour and 15 minutes between submissions");
+v45:CreateLabel("Share your suggestions for new features or improvements!");
+local v52 = v45:CreateSection("Statistics");
 local v53 = 0;
 v45:CreateLabel('Messages Sent Today: ' .. v53);
 v35();
-local v54 = v9:CreateTab("✨ Credits", 'info');
-local v55 = v54:CreateSection("👑 Creator");
-v54:CreateLabel("🛠️ COMBO_WICK - Discord: world_star_hacker");
-local v56 = v54:CreateSection("🤝 Co-Developer");
-v54:CreateLabel("💡 None - Discord: None");
-local v57 = v54:CreateSection("🌐 Discord Server");
-v54:CreateLabel("🔗 Join our server: discord.com/invite/mwTHaCKzhw");
+local v54 = v9:CreateTab("Credits", 'info');
+local v55 = v54:CreateSection("Creator");
+v54:CreateLabel("wibune - Discord: world_star_hacker");
+local v56 = v54:CreateSection("Co-Developer");
+v54:CreateLabel("None - Discord: None");
+local v57 = v54:CreateSection("Discord Server");
+v54:CreateLabel("Join our server: discord.gg/gtQ54c43G3");
 v54:CreateButton({
-    Name = "📋 Copy Discord Link/Youtube",
+    Name = "Copy Discord Link",
     Callback = function()
-        local v110 = "Discord: discord.com/invite/mwTHaCKzhw\nYouTube: https://www.youtube.com/@COMBO_WICK";
+        local v110 = "https://discord.gg/gtQ54c43G3";
         setclipboard(v110);
     end
 });
