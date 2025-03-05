@@ -1,0 +1,313 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService('Players')
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local localplayer = Players.LocalPlayer
+local WorkspacePlayers = game:GetService("Workspace").Game.Players
+local Esp = loadstring(game:HttpGet("https://paste.ee/r/SwvbN6Ey"))()
+Esp.Enabled = false
+Esp.Tracers = false
+Esp.Boxes = false
+local Running = false
+local Frames = {}
+local TimeStart = tick()
+local Player = game:GetService("Players").LocalPlayer
+local getChar = function()
+	local Character = Player.Character
+	if Character then
+		return Character
+	else
+		Player.CharacterAdded:Wait()
+		return getChar()
+	end
+end
+local StartRecord = function()
+	Frames = {}
+	Running = true
+	TimeStart = tick()
+	while Running == true do
+		game:GetService("RunService").Heartbeat:wait()
+		local Character = getChar()
+		table.insert(Frames, {
+			Character.HumanoidRootPart.CFrame,
+			Character.Humanoid:GetState().Value,
+			tick() - TimeStart
+		})
+	end
+end
+local StopRecord = function()
+	Running = false
+end
+local PlayTAS = function()
+	local Character = getChar()
+	local TimePlay = tick()
+	local FrameCount = #Frames
+	local NewFrames = FrameCount
+	local OldFrame = 1
+	local TASLoop
+	TASLoop = game:GetService("RunService").Heartbeat:Connect(function()
+		local NewFrames = OldFrame + 60
+		local CurrentTime = tick()
+		if (CurrentTime - TimePlay) >= Frames[FrameCount][3] then
+			TASLoop:Disconnect()
+		end
+		for i = OldFrame, NewFrames do
+			local Frame = Frames[i]
+			if Frame[3] <= CurrentTime - TimePlay then
+				OldFrame = i
+				Character.HumanoidRootPart.CFrame = Frame[1]
+				Character.Humanoid:ChangeState(Frame[2])
+			end
+		end
+	end)
+end
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+	Name = "♥VHNS♥ | ★NovaX x LunaPhs★",
+	Icon = 0,
+	LoadingTitle = "♥VHNS♥ On Top♥",
+	LoadingSubtitle = "★Made by NovaX x LunaPhs★",
+	Theme = "Default",
+	DisableRayfieldPrompts = false,
+	DisableBuildWarnings = false,
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = "VHNS Config", 
+		FileName = "VHNS.json"
+	},
+	Discord = {
+		Enabled = false,
+		Invite = "noinvitelink",
+		RememberJoins = true 
+	},
+	KeySystem = false,
+	KeySettings = {
+		Title = "",
+		Subtitle = "Key System",
+		Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+		FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+		Key = {
+			"Hello"
+		} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+	}
+})
+local MainTab = Window:CreateTab("Main", 4483362458)
+local lTab = Window:CreateTab("Player", 4483362458)
+local EmoteTab = Window:CreateTab("Emote", 4483362458)
+-- //Main//
+local Settings = {
+	moneyfarm = false,
+	afkfarm = false,
+	TicketFarm = false
+}
+
+local function AutoFarm()
+	while Settings.moneyfarm or Settings.afkfarm or Settings.TicketFarm do
+		task.wait(1)
+		if Settings.TicketFarm then
+			for _, v in pairs(game:GetService("Workspace").Game.Effects.Tickets:GetChildren()) do
+				if localplayer.Character and localplayer.Character:FindFirstChild('HumanoidRootPart') then
+					localplayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame
+				end
+			end
+		end
+		if Settings.moneyfarm then
+			if localplayer.Character and localplayer.Character:GetAttribute("Downed") then
+				ReplicatedStorage.Events.Respawn:FireServer()
+				task.wait(3)
+			end
+		end
+		if Settings.afkfarm and localplayer.Character and localplayer.Character:FindFirstChild('HumanoidRootPart') then
+			localplayer.Character.HumanoidRootPart.CFrame = CFrame.new(6007, 7005, 8005)
+		end
+	end
+end
+
+local speedValue = 10  
+local tpwalking = false  
+local player = game.Players.LocalPlayer
+local hb = game:GetService("RunService").Heartbeat
+
+
+local function startTeleportWalk()
+	while tpwalking do
+		local character = player.Character or player.CharacterAdded:Wait()
+		local humanoid = character:WaitForChild("Humanoid", 5)
+		humanoid.Died:Connect(function()
+			character = player.CharacterAdded:Wait()
+			humanoid = character:WaitForChild("Humanoid", 5)
+		end)
+		while tpwalking and character and humanoid and humanoid.Health > 0 do
+			local delta = hb:Wait()
+			if humanoid.MoveDirection.Magnitude > 0 then
+				character:TranslateBy(humanoid.MoveDirection * speedValue * delta)
+			end
+		end
+		hb:Wait()
+	end
+end
+
+local Paragraph = MainTab:CreateParagraph({
+	Title = "Auto Farm v1.8",
+	Content = "AFK Farm Button Click for start afk farm enjoy :)"
+})
+local Divider = EmoteTab:CreateDivider()
+local Section = MainTab:CreateSection("AutoFarm")
+
+MainTab:CreateToggle({
+	Name = "Money Farm",
+	CurrentValue = false,
+	Flag = "MoneyFarmToggle",
+	Callback = function(State)
+		Settings.moneyfarm = State
+		if State then
+			task.spawn(AutoFarm)
+		end
+	end
+})
+
+MainTab:CreateToggle({
+	Name = "AFK Farm",
+	CurrentValue = false,
+	Flag = "AFKFarmToggle",
+	Callback = function(State)
+		Settings.afkfarm = State
+		if State then
+			task.spawn(AutoFarm)
+		end
+	end
+})
+
+MainTab:CreateToggle({
+	Name = "Ticket Farm",
+	CurrentValue = false,
+	Flag = "TicketFarmToggle",
+	Callback = function(State)
+		Settings.TicketFarm = State
+		if State then
+			task.spawn(AutoFarm)
+		end
+	end
+})
+local Divider = MainTab:CreateDivider()
+local Paragraph = MainTab:CreateParagraph({
+	Title = "Visual",
+	Content = "this is Visual "
+})
+local Section = MainTab:CreateSection("Esp")
+
+MainTab:CreateToggle({
+	Name = "Enable ESP",
+	CurrentValue = false,
+	Flag = "EnableESP",
+	Callback = function(State)
+		Esp.Enabled = State
+	end
+})
+
+MainTab:CreateToggle({
+	Name = "ESP Boxes",
+	CurrentValue = false,
+	Flag = "ESPBoxes",
+	Callback = function(State)
+		Esp.Boxes = State
+	end
+})
+
+MainTab:CreateToggle({
+	Name = "ESP Tracers",
+	CurrentValue = false,
+	Flag = "ESPTracers",
+	Callback = function(State)
+		Esp.Tracers = State
+	end
+})
+local Paragraph = lTab:CreateParagraph({
+	Title = "Local Player v1.0",
+	Content = "Walk Speed and Flying"
+})
+local Divider = lTab:CreateDivider()
+
+local Slider = lTab:CreateSlider({
+	Name = "Walk Speed",
+	Range = {
+		25,
+		250
+	},
+	Increment = 5,
+	Suffix = "",
+	CurrentValue = 50,
+	Flag = "Speed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		speedValue = Value
+	end,
+})
+
+lTab:CreateToggle({
+	Name = "Enable Speed",
+	CurrentValue = false,
+	Flag = "Speed Set",
+	Callback = function(State)
+		tpwalking = State
+		if tpwalking then
+			startTeleportWalk()
+		end
+	end
+})
+
+-- //Emote//
+local Paragraph = EmoteTab:CreateParagraph({
+	Title = "Auto Emote v2.4",
+	Content = "Emote Dash recording click for start recording Stop recording click for stop recording Auto Emote Dash click for Start Emote Dash"
+})
+local Divider = EmoteTab:CreateDivider()
+local Section = EmoteTab:CreateSection("Auto Emote Dash Mobile")
+local Button = EmoteTab:CreateButton({
+	Name = "Emote Dash recording",
+	Callback = StartRecord,
+})
+local Button = EmoteTab:CreateButton({
+	Name = "Stop recording.",
+	Callback = StopRecord,
+})
+
+local Button = EmoteTab:CreateButton({
+	Name = "Auto Emote Dash",
+	Callback = PlayTAS,
+})
+
+local Section = EmoteTab:CreateSection("Auto Emote Dash Key board")
+
+local Keybind = EmoteTab:CreateKeybind({
+	Name = "Emote Dash Recording BIND",
+	CurrentKeybind = "Q",
+	HoldToInteract = false,
+	Flag = "StartRecord",
+	Callback = StartRecord,
+})
+
+local Keybind = EmoteTab:CreateKeybind({
+	Name = "Stop Recording BIND",
+	CurrentKeybind = "E",
+	HoldToInteract = false,
+	Flag = "StopRecord",
+	Callback = StopRecord,
+})
+
+local Keybind = EmoteTab:CreateKeybind({
+	Name = "Auto Emote Dash BIND",
+	CurrentKeybind = "C",
+	HoldToInteract = false,
+	Flag = "PlayTAS",
+	Callback = PlayTAS,
+})
+
+
+
+Rayfield:Notify({
+	Title = "★ VHNS ★ ★ Evade ★",
+	Content = "★ VHNS Script Hub / Evade ★",
+	Duration = 5,
+	Image = 10734966248
+})
