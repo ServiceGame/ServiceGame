@@ -110,7 +110,7 @@ local Button9 = MainTab:CreateButton({
 local Button16 = MainTab:CreateButton({
    Name = "Be NPC or DIE",
    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/Wibudz123/Protect-Delta/refs/heads/main/Protect%20Delta"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ServiceGame/ServiceGame/refs/heads/Loader/Be%20NPC%20or%20DIE"))()
    end,
 })
 
