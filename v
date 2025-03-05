@@ -174,24 +174,18 @@ local Button3 = MainTab:CreateButton({
 })
 
 local MainTab = Window:CreateTab("Credits", nil) -- Title, Image
-local Section = MainTab:CreateSection("Discord - Owner")
+      local Section = MainTab:CreateSection("Home")
 
 local Button = MainTab:CreateButton({
-   Name = "https://discord.gg/gtQ54c43G3",
-   Callback = function()
-   end,
-})
-
-local Button2 = MainTab:CreateButton({
    Name = "Owner Wibu",
    Callback = function()
    end,
 })
 
-local Button3 = MainTab:CreateButton({
+local Button2 = MainTab:CreateButton({
     Name = "Copy Discord Link",
     Callback = function()
-        local links = "Discord: discord.com/invite/mwTHaCKzhw"
+        local links = "https://discord.gg/gtQ54c43G3"
         setclipboard(links)
         Rayfield:Notify({
             Title = "Links Copied",
