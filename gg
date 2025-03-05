@@ -145,7 +145,7 @@ local Button14 = MainTab:CreateButton({
 local Button15 = MainTab:CreateButton({
    Name = "Evade",
    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/ServiceGame/ServiceGame/refs/heads/Loader/Evade"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ServiceGame/ServiceGame/refs/heads/Loader/Evadee"))()
    end,
 })
 
