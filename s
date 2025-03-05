@@ -26,7 +26,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local MainTab = Window:CreateTab("HOME", nil) -- Title, Image
+local MainTab = Window:CreateTab("HOME", 4483362458) -- Title, Image
 local Section = MainTab:CreateSection("Main")
 
 Rayfield:Notify({
@@ -173,15 +173,16 @@ local Button3 = MainTab:CreateButton({
    end,
 })
 
-local MainTab = Window:CreateTab("Credits", nil) -- Title, Image
-      local Section = MainTab:CreateSection("Home")
+local MainTab = Window:CreateTab("Credits", "info") -- Title, Image
+      local Section = MainTab:CreateSection("Creator")
 
 local Button = MainTab:CreateButton({
-   Name = "Owner Wibu",
+   Name = "Wibu - Discord: wibune",
    Callback = function()
    end,
 })
 
+local Section = MainTab:CreateSection("Discord Server")
 local Button2 = MainTab:CreateButton({
     Name = "Copy Discord Link",
     Callback = function()
