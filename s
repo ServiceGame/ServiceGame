@@ -107,6 +107,13 @@ local Button9 = MainTab:CreateButton({
    end,
 })
 
+local Button16 = MainTab:CreateButton({
+   Name = "Be NPC or DIE",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Wibudz123/Protect-Delta/refs/heads/main/Protect%20Delta"))()
+   end,
+})
+
 local Button10 = MainTab:CreateButton({
    Name = "Jujutsu Infinite",
    Callback = function()
