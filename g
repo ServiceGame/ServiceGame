@@ -188,14 +188,14 @@ local Button2 = MainTab:CreateButton({
    end,
 })
 
-KeyTab:CreateButton({
-    Name = "📋 Copy Discord Link/YouTube",
+local Button3 = MainTab:CreateButton({
+    Name = "Copy Discord Link",
     Callback = function()
-        local links = "Discord: discord.com/invite/mwTHaCKzhw\nYouTube: https://www.youtube.com/@COMBO_WICK"
+        local links = "Discord: discord.com/invite/mwTHaCKzhw"
         setclipboard(links)
         Rayfield:Notify({
-            Title = "✅ Links Copied",
-            Content = "Discord and YouTube links have been copied to your clipboard!",
+            Title = "Links Copied",
+            Content = "Discord links have been copied to your clipboard!",
             Duration = 5,
             Image = 4483362458
         })
