@@ -135,10 +135,17 @@ local Button13 = MainTab:CreateButton({
    end,
 })
 
-local Button13 = MainTab:CreateButton({
+local Button14 = MainTab:CreateButton({
    Name = "Combat Warrior",
    Callback = function()
    loadstring(game:HttpGet("https://raw.githubusercontent.com/Wibudz123/ServiceGame/refs/heads/main/CombatWarrior"))()
+   end,
+})
+
+local Button15 = MainTab:CreateButton({
+   Name = "Combat Warrior",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ServiceGame/ServiceGame/refs/heads/Loader/Evade"))()
    end,
 })
 
