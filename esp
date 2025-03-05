@@ -1,7 +1,3 @@
--- discord.gg/25ms
-
---
-
 local v0 = string.char;
 local v1 = string.byte;
 local v2 = string.sub;
