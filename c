@@ -899,7 +899,7 @@ v45:CreateLabel('Messages Sent Today: ' .. v53);
 v35();
 local v54 = v9:CreateTab("Credits", 'info');
 local v55 = v54:CreateSection("Creator");
-v54:CreateLabel("wibune - Discord: world_star_hacker");
+v54:CreateLabel("Wibu - Discord: wibune");
 local v56 = v54:CreateSection("Co-Developer");
 v54:CreateLabel("None - Discord: None");
 local v57 = v54:CreateSection("Discord Server");
