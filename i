@@ -93,6 +93,13 @@ local Button11 = MainTab:CreateButton({
    end,
 })
 
+local Button11 = MainTab:CreateButton({
+   Name = "Animal Simulator",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ServiceGame/ServiceGame/refs/heads/Loader/AS"))()
+   end,
+})
+
 local Button7 = MainTab:CreateButton({
    Name = "Build a Boat Treasue", 
    Callback = function()
