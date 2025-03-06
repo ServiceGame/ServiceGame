@@ -39,63 +39,24 @@ pcall(
     end
 )
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local library =
+    loadstring(game:HttpGet(("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3")))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "ServiceGame - Universal",
-   LoadingTitle = "ServiceGame",
-   LoadingSubtitle = "Made by Wibu",
-   ConfigurationSaving = {
-      Enabled = false,
-      FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "ServiceGame Hub"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "gtQ54c43G3", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-   },
-   KeySystem = false, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "ServiceGame - Keysystem",
-      Subtitle = "by SG TEAM",
-      Note = "Join discord to get Key or Dm discord: wibune",
-      FileName = "Enter Your Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"Wibu"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-   }
-})
+local w = library:CreateWindow("ServiceGame ESP")
 
-local MainTab = Window:CreateTab("Simple ESP", 4483362458) -- Title, Image
-local Section = MainTab:CreateSection("Main")
+local b = w:CreateFolder("Main")
 
-Rayfield:Notify({
-   Title = "Enjoy!",
-   Content = "ServiceGame  discord.gg/gtQ54c43G3",
-   Duration = 6.5,
-   Image = 4483362458,
-   Actions = { -- Notification Buttons
-      Ignore = {
-         Name = "Okay!",
-         Callback = function()
-         print("The user tapped Okay!")
-      end
-   },
-},
-})
+b:Toggle(
+    "ESP",
+    function(bool)
+        _G.ESP = bool
+    end
+)
 
-local aToggle = MainTab:CreateToggle({
-    Name = "Chams",
-    Callback = function(bool)
-    _G.ESP = bool
-    end,
-})
-
-local b:ColorPicker({
-    Name = "Color",
+b:ColorPicker(
+    "ESP Color",
     Color3.fromRGB(255, 255, 255),
-    Callback = function(color)
-    _G.ESPColor = color
-    end,
-})
+    function(color)
+        _G.ESPColor = color
+    end
+)
