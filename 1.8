@@ -145,6 +145,19 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- UI Window
+local CreditsTab = Window:CreateTab("Credits")
+local CreditsSection = CreditsTab:CreateSection("Created by Wibu")
+
+local CreatorLabel = CreditsSection:CreateLabel("Created by: Wibu")
+local DiscordLabel = CreditsSection:CreateLabel("Discord: wibunek")
+
+local CopyDiscordButton = CreditsSection:CreateButton({
+    Name = "Copy Discord Link",
+    Callback = function()
+        setclipboard("https://discord.gg/gtQ54c43G3")
+        Rayfield:Notify({Title = "Discord Link", Content = "Copied to Clipboard!", Duration = 1})
+    end
+})
 local VisualTab = Window:CreateTab("Visuals")
 local ESPSection = VisualTab:CreateSection("Setting")
 
@@ -160,7 +173,10 @@ local function createESPBall(ball)
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
     label.Text = "BALL"
-    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+    label.TextColor3 = Color3.fromRGB(255, 255, 255) -- White Text
+    label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0) -- Black Outline
+    label.TextStrokeTransparency = 0
+    label.Font = Enum.Font.SourceSansBold -- Bold Font
     label.TextScaled = true
 end
 
