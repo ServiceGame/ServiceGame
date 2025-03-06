@@ -1,4 +1,4 @@
--- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, Anti-Curve, Custom Ball Direction, Auto Ability, and Auto Parry Mode
+-- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, Anti-Curve, Custom Ball Direction, Auto Ability, Auto Parry Mode, and Auto Config Load
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -6,6 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
 
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
@@ -17,18 +18,37 @@ local abilityButtonPress = replicatedStorage.Remotes.AbilityButtonPress
 -- Load Optimized UI Library
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
--- Create UI Window
-local Window = Rayfield:CreateWindow({
-    Name = "AutoParry GUI",
-    LoadingTitle = "Blade Ball AutoParry",
-    LoadingSubtitle = "Ultra Fast Mode",
-    ConfigurationSaving = {Enabled = false},
-    KeySystem = false
-})
+-- Config File Path
+local configFilePath = "AutoParryConfig.json"
 
-local AutoParryTab = Window:CreateTab("AutoParry")
-local SettingsSection = AutoParryTab:CreateSection("Settings")
-local StatsSection = AutoParryTab:CreateSection("Performance Stats")
+-- Function to Save Config Automatically
+local function autoSaveConfig()
+    local config = {
+        isRunning = isRunning,
+        autoAttack = autoAttack,
+        autoAbility = autoAbility,
+        parryMode = parryMode,
+        sliderValue = sliderValue,
+        ballDirection = ballDirection
+    }
+    writefile(configFilePath, HttpService:JSONEncode(config))
+end
+
+-- Function to Load Config Automatically
+local function autoLoadConfig()
+    if isfile(configFilePath) then
+        local config = HttpService:JSONDecode(readfile(configFilePath))
+        isRunning = config.isRunning
+        autoAttack = config.autoAttack
+        autoAbility = config.autoAbility
+        parryMode = config.parryMode
+        sliderValue = config.sliderValue
+        ballDirection = config.ballDirection
+    end
+end
+
+-- Auto Load Config on Start
+autoLoadConfig()
 
 -- Constants (Extreme Reflex Mode)
 local BASE_THRESHOLD = 0.05  -- Faster reflex time
@@ -79,8 +99,8 @@ local function adjustParryDirection(ball)
 end
 
 -- FPS & Ping Display
-local fpsLabel = StatsSection:CreateLabel("FPS: Calculating...")
-local pingLabel = StatsSection:CreateLabel("Ping: Calculating...")
+local fpsLabel = SettingsSection:CreateLabel("FPS: Calculating...")
+local pingLabel = SettingsSection:CreateLabel("Ping: Calculating...")
 
 RunService.RenderStepped:Connect(function()
     local fps = math.floor(1 / RunService.RenderStepped:Wait())
@@ -124,13 +144,25 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- UI Window
+local Window = Rayfield:CreateWindow({
+    Name = "AutoParry GUI",
+    LoadingTitle = "Blade Ball AutoParry",
+    LoadingSubtitle = "Ultra Fast Mode",
+    ConfigurationSaving = {Enabled = false},
+    KeySystem = false
+})
+
+local AutoParryTab = Window:CreateTab("AutoParry")
+local SettingsSection = AutoParryTab:CreateSection("Settings")
+
 -- UI Elements
 local AutoParryToggle = AutoParryTab:CreateToggle({
     Name = "Enable AutoParry (Ultra-Fast)",
-    CurrentValue = false,
+    CurrentValue = isRunning,
     Callback = function(value)
         isRunning = value
-        Rayfield:Notify({Title = "AutoParry", Content = value and "Activated" or "Deactivated", Duration = 1})
+        autoSaveConfig()
     end
 })
 
@@ -139,6 +171,7 @@ local AutoAbilityToggle = AutoParryTab:CreateToggle({
     CurrentValue = autoAbility,
     Callback = function(value)
         autoAbility = value
+        autoSaveConfig()
     end
 })
 
@@ -148,16 +181,18 @@ local ParryModeDropdown = AutoParryTab:CreateDropdown({
     CurrentOption = parryMode,
     Callback = function(value)
         parryMode = value
+        autoSaveConfig()
     end
 })
 
 local DistanceSlider = AutoParryTab:CreateSlider({
     Name = "Parry Distance",
-    Range = {10, 50},
+    Range = {0.5, 100},
     Increment = 1,
     CurrentValue = sliderValue,
     Callback = function(value)
         sliderValue = value
+        autoSaveConfig()
     end
 })
 
@@ -166,6 +201,7 @@ local AutoAttackToggle = AutoParryTab:CreateToggle({
     CurrentValue = autoAttack,
     Callback = function(value)
         autoAttack = value
+        autoSaveConfig()
     end
 })
 
@@ -176,6 +212,6 @@ end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.One then isRunning = true end
-    if input.KeyCode == Enum.KeyCode.Two then isRunning = false end
+    if input.KeyCode == Enum.KeyCode.One then isRunning = true autoSaveConfig() end
+    if input.KeyCode == Enum.KeyCode.Two then isRunning = false autoSaveConfig() end
 end)
