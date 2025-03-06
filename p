@@ -16,7 +16,7 @@ pcall(
                     local character = v.Character
                     if not character then continue end
 
-                    -- Tính toán khoảng cách giữa camera và nhân vật
+                    -- Tính toán khoảng cách giữa camera và nhân vật (dù không kiểm tra khoảng cách nữa)
                     local distance = (camera.CFrame.Position - character.PrimaryPart.Position).Magnitude
 
                     -- Tạo Highlight nếu chưa có
