@@ -147,11 +147,6 @@ end
                             local healthLabel = espHealth:FindFirstChild("TextLabel")
                             local healthFill = espHealth:FindFirstChild("Frame"):FindFirstChild("Frame")
                             if healthLabel then
-                                -- Cập nhật số máu
-                                healthLabel.Text = "HP: " .. math.floor(humanoid.Health)
-                            end
-                            if healthFill then
-                                -- Cập nhật phần hiển thị thanh máu
                                 healthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
                             end
                         end
