@@ -11,12 +11,18 @@ pcall(
         game:GetService("RunService").RenderStepped:Connect(
             function()
                 local camera = game.Workspace.CurrentCamera
+                local localPlayer = game.Players.LocalPlayer  -- Lấy người chơi hiện tại
 
                 for _, v in pairs(game.Players:GetPlayers()) do
+                    -- Bỏ qua chính người chơi đang sử dụng script (localPlayer)
+                    if v == localPlayer then
+                        continue
+                    end
+
                     local character = v.Character
                     if not character then continue end
 
-                    -- Tính toán khoảng cách giữa camera và nhân vật (dù không kiểm tra khoảng cách nữa)
+                    -- Tính toán khoảng cách giữa camera và nhân vật
                     local distance = (camera.CFrame.Position - character.PrimaryPart.Position).Magnitude
 
                     -- Tạo Highlight nếu chưa có
@@ -59,7 +65,7 @@ pcall(
                         healthBar.Name = "ESPHealth"
                         healthBar.Adornee = character:FindFirstChild("Head")
                         healthBar.Size = UDim2.new(0, 100, 0, 20)
-                        healthBar.StudsOffset = Vector3.new(0, 3, 0)
+                        healthBar.StudsOffset = Vector3.new(0, -3, 0)  -- Di chuyển xuống dưới chân
                         healthBar.AlwaysOnTop = true
                         healthBar.Parent = character
 
