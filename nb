@@ -22,9 +22,6 @@ pcall(
                     local character = v.Character
                     if not character then continue end
 
-                    -- Tính toán khoảng cách giữa camera và nhân vật
-                    local distance = (camera.CFrame.Position - character.PrimaryPart.Position).Magnitude
-
                     -- Tạo Highlight nếu chưa có
                     if not character:FindFirstChild("Highlight") then
                         highlight.FillTransparency = 1
@@ -62,7 +59,7 @@ pcall(
                         local healthBar = Instance.new("BillboardGui")
                         healthBar.Name = "ESPHealth"
                         healthBar.Adornee = character:FindFirstChild("Head")
-                        healthBar.Size = UDim2.new(0, 100, 0, 20)
+                        healthBar.Size = UDim2.new(0, 80, 0, 10)  -- Giảm kích thước thanh máu
                         healthBar.StudsOffset = Vector3.new(0, -3, 0)  -- Di chuyển xuống dưới chân
                         healthBar.AlwaysOnTop = true
                         healthBar.Parent = character
@@ -82,10 +79,10 @@ pcall(
                         -- Cập nhật số máu
                         local healthLabel = Instance.new("TextLabel")
                         healthLabel.Size = UDim2.new(1, 0, 0, 20)
-                        healthLabel.Text = "Health: " .. math.floor(humanoid.Health)
+                        healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Thay "Health" thành "HP"
                         healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu
                         healthLabel.TextStrokeTransparency = 0.5
-                        healthLabel.TextSize = 14
+                        healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn
                         healthLabel.BackgroundTransparency = 1
                         healthLabel.Parent = healthBar
                     end
@@ -147,7 +144,7 @@ pcall(
                             local healthFill = espHealth:FindFirstChild("Frame"):FindFirstChild("Frame")
                             if healthLabel then
                                 -- Cập nhật số máu
-                                healthLabel.Text = "Health: " .. math.floor(humanoid.Health)
+                                healthLabel.Text = "HP: " .. math.floor(humanoid.Health)
                             end
                             if healthFill then
                                 -- Cập nhật phần hiển thị thanh máu
