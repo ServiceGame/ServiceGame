@@ -51,29 +51,45 @@ pcall(
                     end
 
                     -- Cập nhật thanh máu và số máu nếu có
-                    if _G.ESPHealth and character:FindFirstChild("Humanoid") and not character:FindFirstChild("ESPHealth") then
-                        local humanoid = character:FindFirstChild("Humanoid")
+if _G.ESPHealth and character:FindFirstChild("Humanoid") and not character:FindFirstChild("ESPHealth") then
+    local humanoid = character:FindFirstChild("Humanoid")
 
-                        -- Tạo Health Bar (thanh máu)
-                        local healthBar = Instance.new("BillboardGui")
-                        healthBar.Name = "ESPHealth"
-                        healthBar.Adornee = character:FindFirstChild("Head")
-                        healthBar.Size = UDim2.new(0, 80, 0, 10)  -- Giảm kích thước thanh máu
-                        healthBar.StudsOffset = Vector3.new(0, -3, 0)  -- Di chuyển xuống dưới chân
-                        healthBar.AlwaysOnTop = true
-                        healthBar.Parent = character
+    -- Tạo BillboardGui cho thanh máu và số máu
+    local healthBar = Instance.new("BillboardGui")
+    healthBar.Name = "ESPHealth"
+    healthBar.Adornee = character:FindFirstChild("Head")
+    healthBar.Size = UDim2.new(0, 80, 0, 20)  -- Đặt chiều cao của health bar
+    healthBar.StudsOffset = Vector3.new(0, -3, 0)  -- Di chuyển xuống dưới chân
+    healthBar.AlwaysOnTop = true
+    healthBar.Parent = character
 
-                        local frame = Instance.new("Frame")
-                        frame.Size = UDim2.new(1, 0, 1, 0)
-                        frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Màu đỏ cho thanh máu
-                        frame.BackgroundTransparency = 0
-                        frame.Parent = healthBar
+    -- Tạo Frame cho thanh máu
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 0, 10)  -- Kích thước thanh máu
+    frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Màu đỏ cho thanh máu
+    frame.BackgroundTransparency = 0
+    frame.Parent = healthBar
 
-                        local healthFill = Instance.new("Frame")
-                        healthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)  -- Cập nhật chiều rộng theo máu
-                        healthFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Màu xanh cho phần đầy
-                        healthFill.BackgroundTransparency = 0
-                        healthFill.Parent = frame
+    -- Tạo phần thanh máu (vùng màu xanh)
+    local healthFill = Instance.new("Frame")
+    healthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)  -- Cập nhật chiều rộng theo máu
+    healthFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Màu xanh cho phần đầy
+    healthFill.BackgroundTransparency = 0
+    healthFill.Parent = frame
+
+    -- Tạo Label cho số máu (HP)
+    local healthLabel = Instance.new("TextLabel")
+    healthLabel.Size = UDim2.new(1, 0, 1, 0)
+    healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Hiển thị số máu
+    healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu
+    healthLabel.TextStrokeTransparency = 0.5
+    healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn
+    healthLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)  -- Màu đen cho viền
+    healthLabel.BackgroundTransparency = 1
+    healthLabel.Parent = healthBar
+end
+
+-- Cập nhật số máu local healthLabel = Instance.new("TextLabel") healthLabel.Size = UDim2.new(1, 0, 0, 20) healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Thay "Health" thành "HP" healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu healthLabel.TextStrokeTransparency = 0.5 healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn healthLabel.BackgroundTransparency = 1 healthLabel.Parent = healthBar end
 
                     -- Hiển thị khoảng cách bên phải người chơi nếu tính năng ShowDistance bật
                     if _G.ShowDistance then
