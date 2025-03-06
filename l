@@ -212,3 +212,111 @@ b:ColorPicker(
         _G.ESPColor = color
     end
 )
+
+-- Mục Aimbot
+local aimbotFolder = w:CreateFolder("Aimbot")
+
+-- Cài đặt Aimbot
+_G.AimbotEnabled = false
+_G.AimbotSmoothness = 0.2  -- Độ mượt của chuyển động nhắm
+_G.AimbotFOV = 100  -- Phạm vi FOV trong đó Aimbot hoạt động
+_G.AimbotTargetPart = "Head"  -- Phần cơ thể mà Aimbot sẽ nhắm vào (Head, Torso, etc.)
+_G.CheckWall = true  -- Kiểm tra núp tường
+
+-- Kích hoạt/Tắt Aimbot
+aimbotFolder:Toggle(
+    "Aimbot Enabled",
+    function(bool)
+        _G.AimbotEnabled = bool
+    end
+)
+
+-- Điều chỉnh độ mượt của Aimbot
+aimbotFolder:Slider(
+    "Aimbot Smoothness",
+    0,
+    1,
+    0.2,
+    function(value)
+        _G.AimbotSmoothness = value
+    end
+)
+
+-- Điều chỉnh phạm vi FOV
+aimbotFolder:Slider(
+    "Aimbot FOV",
+    0,
+    180,
+    100,
+    function(value)
+        _G.AimbotFOV = value
+    end
+)
+
+-- Chọn phần cơ thể để Aimbot nhắm vào
+aimbotFolder:Dropdown(
+    "Aimbot Target Part",
+    {"Head", "Torso", "HumanoidRootPart"},
+    function(value)
+        _G.AimbotTargetPart = value
+    end
+)
+
+-- Kiểm tra có bị tường che (wallcheck)
+aimbotFolder:Toggle(
+    "Check Wall",
+    function(bool)
+        _G.CheckWall = bool
+    end
+)
+
+-- Chạy Aimbot
+game:GetService("RunService").RenderStepped:Connect(function()
+    if _G.AimbotEnabled then
+        local camera = game.Workspace.CurrentCamera
+        local localPlayer = game.Players.LocalPlayer
+        local closestTarget = nil
+        local closestDistance = math.huge
+
+        -- Duyệt qua tất cả các người chơi
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v == localPlayer then continue end
+
+            local character = v.Character
+            if not character or not character:FindFirstChild(_G.AimbotTargetPart) then continue end
+
+            local targetPart = character:FindFirstChild(_G.AimbotTargetPart)
+            local screenPos, onScreen = camera:WorldToScreenPoint(targetPart.Position)
+            
+            if onScreen then
+                local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)).Magnitude
+                if distance < _G.AimbotFOV and distance < closestDistance then
+                    if _G.CheckWall then
+                        -- Kiểm tra xem mục tiêu có bị vật thể che khuất không
+                        local ray = Ray.new(camera.CFrame.Position, (targetPart.Position - camera.CFrame.Position).unit * 500)
+                        local hitPart = game.Workspace:FindPartOnRay(ray, localPlayer.Character)
+
+                        -- Nếu không có vật thể nào che khuất, chọn làm mục tiêu
+                        if not hitPart or not hitPart.Parent:FindFirstChild("Humanoid") then
+                            closestTarget = targetPart
+                            closestDistance = distance
+                        end
+                    else
+                        closestTarget = targetPart
+                        closestDistance = distance
+                    end
+                end
+            end
+        end
+
+        -- Nếu tìm thấy mục tiêu gần nhất, thực hiện hành động nhắm
+        if closestTarget then
+            local targetPosition = closestTarget.Position
+            local direction = (targetPosition - camera.CFrame.Position).unit
+            local newCFrame = camera.CFrame + direction * _G.AimbotSmoothness
+
+            -- Cập nhật vị trí nhắm
+            camera.CFrame = CFrame.new(camera.CFrame.Position, targetPosition)
+        end
+    end
+end)
