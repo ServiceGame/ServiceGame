@@ -138,6 +138,30 @@ end
                         espName.Enabled = _G.ESP and _G.ESPName  -- Hiển thị ESP Name nếu tính năng bật
                     end
 
+                   -- Cập nhật ESP Health (số máu và thanh máu)
+                    if espHealth then
+                        espHealth.Enabled = _G.ESPHealth  -- Hiển thị ESP Health nếu tính năng bật
+                        -- Cập nhật số máu và thanh máu theo thời gian
+                        local humanoid = character:FindFirstChild("Humanoid")
+                        if humanoid then
+                            local healthLabel = espHealth:FindFirstChild("TextLabel")
+                            local healthFill = espHealth:FindFirstChild("Frame"):FindFirstChild("Frame")
+                            if healthLabel then
+                                -- Cập nhật số máu
+                                healthLabel.Text = "HP: " .. math.floor(humanoid.Health)
+                            end
+                            if healthFill then
+                                -- Cập nhật phần hiển thị thanh máu
+                                healthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
+                            end
+                        end
+                    end
+                end
+            end
+        )
+    end
+)
+
 local library =
     loadstring(game:HttpGet(("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3")))()
 
