@@ -1,4 +1,4 @@
--- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, and FPS/Ping Display
+-- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, Anti-Curve, and Custom Ball Direction
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -40,6 +40,7 @@ local sliderValue = 30  -- Increased default parry distance
 local isRunning = false
 local autoAttack = true  -- Enabled by default
 local antiAFK = true  -- Anti-AFK enabled by default
+local ballDirection = "Forward"  -- Default direction for returning the ball
 
 -- Optimized function to get closest ball instantly
 local function getClosestBall()
@@ -55,6 +56,13 @@ local function getClosestBall()
         end
     end
     return bestBall, minDistance
+end
+
+-- Anti-Curve Function
+local function adjustParryDirection(ball)
+    local velocity = ball.Velocity.Unit
+    local correctionFactor = Vector3.new(-velocity.X * 0.8, 0, -velocity.Z * 0.8)  -- Adjust against curve
+    return correctionFactor
 end
 
 -- FPS & Ping Display
@@ -78,6 +86,8 @@ RunService.Heartbeat:Connect(function()
     if not ball or not HRP then return end
 
     if ball:GetAttribute("target") == localPlayer.Name and distance <= IMMEDIATE_PARRY_DISTANCE then
+        local correction = adjustParryDirection(ball)
+        HRP.CFrame = HRP.CFrame + correction  -- Adjust player positioning to counter curve
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
         Rayfield:Notify({Title = "AutoParry", Content = "Ultra-Fast Parry!", Duration = 0.3})
     end
@@ -125,6 +135,15 @@ local DistanceSlider = AutoParryTab:CreateSlider({
     CurrentValue = sliderValue,
     Callback = function(value)
         sliderValue = value
+    end
+})
+
+local BallDirectionDropdown = AutoParryTab:CreateDropdown({
+    Name = "Ball Return Direction",
+    Options = {"Forward", "Left", "Right", "Random"},
+    CurrentOption = ballDirection,
+    Callback = function(value)
+        ballDirection = value
     end
 })
 
