@@ -137,16 +137,16 @@ end
                         espName.Enabled = _G.ESP and _G.ESPName  -- Hiển thị ESP Name nếu tính năng bật
                     end
 
-                    -- Cập nhật ESP Health (số máu và thanh máu)
+             -- Cập nhật ESP Health (số máu và thanh máu)
                     if espHealth then
                         espHealth.Enabled = _G.ESPHealth  -- Hiển thị ESP Health nếu tính năng bật
                         -- Cập nhật số máu và thanh máu theo thời gian
                         local humanoid = character:FindFirstChild("Humanoid")
                         if humanoid then
-                            
+                            local healthLabel = espHealth:FindFirstChild("TextLabel")
                             local healthFill = espHealth:FindFirstChild("Frame"):FindFirstChild("Frame")
                             if healthLabel then
-                           -- Cập nhật số máu
+                                -- Cập nhật số máu
                                 healthLabel.Text = "HP: " .. math.floor(humanoid.Health)
                             end
                             if healthFill then
