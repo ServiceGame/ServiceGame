@@ -190,7 +190,7 @@ local Button = MainTab:CreateButton({
 })
 
 local Section = MainTab:CreateSection("Discord Server")
-local Label = MainTabCreateLabel("Join our server: discord.gg/gtQ54c43G3");
+local Label = CreateLabel("Join our server: discord.gg/gtQ54c43G3");
 local Button2 = MainTab:CreateButton({
     Name = "Copy Discord Link",
     Callback = function()
