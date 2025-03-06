@@ -19,7 +19,7 @@ local abilityButtonPress = replicatedStorage.Remotes.AbilityButtonPress
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
 -- Config File Path
-local configFilePath = "AutoParryConfig.json"
+local configFilePath = "SGConfig.json"
 
 -- Function to Save Config Automatically
 local function autoSaveConfig()
@@ -145,20 +145,69 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- UI Window
+local VisualTab = Window:CreateTab("Visuals")
+local ESPSection = VisualTab:CreateSection("Setting")
+
+-- ESP Ball Function
+local function createESPBall(ball)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Size = UDim2.new(0, 100, 0, 50)
+    billboard.Adornee = ball
+    billboard.AlwaysOnTop = true
+    billboard.Parent = ball
+    
+    local label = Instance.new("TextLabel", billboard)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = "BALL"
+    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+    label.TextScaled = true
+end
+
+-- Toggle for ESP
+local ESPEnabled = false
+local ESPToggle = ESPSection:CreateToggle({
+    Name = "Enable Ball ESP",
+    CurrentValue = ESPEnabled,
+    Callback = function(value)
+        ESPEnabled = value
+        if ESPEnabled then
+            for _, ball in ipairs(ballsFolder:GetChildren()) do
+                if ball:GetAttribute("realBall") then
+                    createESPBall(ball)
+                end
+            end
+        else
+            for _, ball in ipairs(ballsFolder:GetChildren()) do
+                if ball:FindFirstChild("BillboardGui") then
+                    ball.BillboardGui:Destroy()
+                end
+            end
+        end
+    end
+})
+
+ballsFolder.ChildAdded:Connect(function(ball)
+    if ESPEnabled and ball:GetAttribute("realBall") then
+        createESPBall(ball)
+    end
+end)
+
+
 local Window = Rayfield:CreateWindow({
-    Name = "AutoParry GUI",
-    LoadingTitle = "Blade Ball AutoParry",
-    LoadingSubtitle = "Ultra Fast Mode",
+    Name = "ServiceGame - Blade Ball",
+    LoadingTitle = "Blade Ball",
+    LoadingSubtitle = "By Wibu",
     ConfigurationSaving = {Enabled = false},
     KeySystem = false
 })
 
-local AutoParryTab = Window:CreateTab("AutoParry")
-local SettingsSection = AutoParryTab:CreateSection("Settings")
+local AutoParryTab = Window:CreateTab("Combat")
+local SettingsSection = AutoParryTab:CreateSection("Setting")
 
 -- UI Elements
 local AutoParryToggle = AutoParryTab:CreateToggle({
-    Name = "Enable AutoParry (Ultra-Fast)",
+    Name = "Auto Parry (Ultra-Fast)",
     CurrentValue = isRunning,
     Callback = function(value)
         isRunning = value
@@ -167,7 +216,7 @@ local AutoParryToggle = AutoParryTab:CreateToggle({
 })
 
 local AutoAbilityToggle = AutoParryTab:CreateToggle({
-    Name = "Auto Use Ability",
+    Name = "Auto Ability",
     CurrentValue = autoAbility,
     Callback = function(value)
         autoAbility = value
