@@ -77,6 +77,16 @@ if _G.ESPHealth and character:FindFirstChild("Humanoid") and not character:FindF
     healthFill.BackgroundTransparency = 0
     healthFill.Parent = frame
 
+    -- Tạo Label cho số máu (HP)
+    local healthLabel = Instance.new("TextLabel")
+    healthLabel.Size = UDim2.new(1, 0, 1, 0)
+    healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Hiển thị số máu
+    healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu
+    healthLabel.TextStrokeTransparency = 0.5
+    healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn
+    healthLabel.Parent = healthBar
+end
+
 -- Cập nhật số máu local healthLabel = Instance.new("TextLabel") healthLabel.Size = UDim2.new(1, 0, 0, 20) healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Thay "Health" thành "HP" healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu healthLabel.TextStrokeTransparency = 0.5 healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn healthLabel.BackgroundTransparency = 1 healthLabel.Parent = healthBar end
 
                     -- Hiển thị khoảng cách bên phải người chơi nếu tính năng ShowDistance bật
