@@ -1,0 +1,48 @@
+ESPDeveloperSection:Dropdown({
+	Name = "Update Mode",
+	Flag = "ESP_UpdateMode",
+	Content = {"RenderStepped", "Stepped", "Heartbeat"},
+	Default = ESP_DeveloperSettings.UpdateMode,
+	Callback = function(Value)
+		ESP_DeveloperSettings.UpdateMode = Value
+	end
+})
+
+ESPDeveloperSection:Dropdown({
+	Name = "Team Check Option",
+	Flag = "ESP_TeamCheckOption",
+	Content = {"TeamColor", "Team"},
+	Default = ESP_DeveloperSettings.TeamCheckOption,
+	Callback = function(Value)
+		ESP_DeveloperSettings.TeamCheckOption = Value
+	end
+})
+
+ESPDeveloperSection:Slider({
+	Name = "Rainbow Speed",
+	Flag = "ESP_RainbowSpeed",
+	Default = ESP_DeveloperSettings.RainbowSpeed * 10,
+	Min = 5,
+	Max = 30,
+	Callback = function(Value)
+		ESP_DeveloperSettings.RainbowSpeed = Value / 10
+	end
+})
+
+ESPDeveloperSection:Slider({
+	Name = "Width Boundary",
+	Flag = "ESP_WidthBoundary",
+	Default = ESP_DeveloperSettings.WidthBoundary * 10,
+	Min = 5,
+	Max = 30,
+	Callback = function(Value)
+		ESP_DeveloperSettings.WidthBoundary = Value / 10
+	end
+})
+
+ESPDeveloperSection:Button({
+	Name = "Refresh",
+	Callback = function()
+		ESP:Restart()
+	end
+})
