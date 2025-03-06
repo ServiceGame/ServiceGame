@@ -95,21 +95,25 @@ b:ColorPicker("Color", Color3.fromRGB(255, 255, 255), function(color)
     _G.ESPColor = color
 end)
 
--- Các toggle cho Aimbot
+-- Tạo một thư mục riêng cho Aimbot trong GUI
 local aimbotFolder = w:CreateFolder("Aimbot")
 
+-- Aimbot Toggle
 aimbotFolder:Toggle("Aimbot", function(bool)
     _G.AimbotEnabled = bool
 end)
 
+-- Slider cho FOV
 aimbotFolder:Slider("FOV", 60, 1, 180, function(value)
     _G.AimbotFOV = value
 end)
 
+-- Slider cho Smooth Aiming
 aimbotFolder:Slider("Smooth", 0.1, 0.01, 1, function(value)
     _G.AimbotSmooth = value
 end)
 
+-- Wall Check Toggle
 aimbotFolder:Toggle("Wall Check", function(bool)
     _G.AimbotWallCheck = bool
 end)
