@@ -182,9 +182,9 @@ local Button3 = MainTab:CreateButton({
 
 local MainTab = Window:CreateTab("Theme", nil) -- Title, Image
       local Section = MainTab:CreateSection("Color Hub")
-   Name = "Default",
+   Name = "AmberGlow",
    Callback = function()
-      Window.ModifyTheme('Default')
+      Window.ModifyTheme('AmberGlow')
    end,
 })
 
