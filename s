@@ -184,7 +184,7 @@ local MainTab = Window:CreateTab("Theme", nil) -- Title, Image
       local Section = MainTab:CreateSection("Color Hub")
    Name = "Defaut",
    Callback = function()
-      Window.ModifyTheme('Default')
+      Window.ModifyTheme("Defaut")
    end,
 })
 
