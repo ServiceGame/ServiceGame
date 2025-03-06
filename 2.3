@@ -1,4 +1,4 @@
--- Ultra-Fast Optimized AutoParry Script with Anti-AFK and Improved Auto Attack
+-- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, and FPS/Ping Display
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -27,6 +27,7 @@ local Window = Rayfield:CreateWindow({
 
 local AutoParryTab = Window:CreateTab("AutoParry")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
+local StatsSection = AutoParryTab:CreateSection("Performance Stats")
 
 -- Constants (Extreme Reflex Mode)
 local BASE_THRESHOLD = 0.05  -- Faster reflex time
@@ -55,6 +56,18 @@ local function getClosestBall()
     end
     return bestBall, minDistance
 end
+
+-- FPS & Ping Display
+local fpsLabel = StatsSection:CreateLabel("FPS: Calculating...")
+local pingLabel = StatsSection:CreateLabel("Ping: Calculating...")
+
+RunService.RenderStepped:Connect(function()
+    local fps = math.floor(1 / RunService.RenderStepped:Wait())
+    fpsLabel:Set("FPS: " .. fps)
+    
+    local ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
+    pingLabel:Set("Ping: " .. ping .. " ms")
+end)
 
 -- Main auto-parry logic with ultra-fast reflexes
 RunService.Heartbeat:Connect(function()
