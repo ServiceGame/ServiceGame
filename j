@@ -77,18 +77,6 @@ if _G.ESPHealth and character:FindFirstChild("Humanoid") and not character:FindF
     healthFill.BackgroundTransparency = 0
     healthFill.Parent = frame
 
-    -- Tạo Label cho số máu (HP)
-    local healthLabel = Instance.new("TextLabel")
-    healthLabel.Size = UDim2.new(1, 0, 1, 0)
-    healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Hiển thị số máu
-    healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu
-    healthLabel.TextStrokeTransparency = 0.5
-    healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn
-    healthLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)  -- Màu đen cho viền
-    healthLabel.BackgroundTransparency = 1
-    healthLabel.Parent = healthBar
-end
-
 -- Cập nhật số máu local healthLabel = Instance.new("TextLabel") healthLabel.Size = UDim2.new(1, 0, 0, 20) healthLabel.Text = "HP: " .. math.floor(humanoid.Health)  -- Thay "Health" thành "HP" healthLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho số máu healthLabel.TextStrokeTransparency = 0.5 healthLabel.TextSize = 12  -- Kích thước chữ nhỏ hơn healthLabel.BackgroundTransparency = 1 healthLabel.Parent = healthBar end
 
                     -- Hiển thị khoảng cách bên phải người chơi nếu tính năng ShowDistance bật
@@ -138,12 +126,19 @@ end
                         espName.Enabled = _G.ESP and _G.ESPName  -- Hiển thị ESP Name nếu tính năng bật
                     end
 
-                   -- Cập nhật ESP Health (số máu và thanh máu)
+                    -- Cập nhật ESP Health (số máu và thanh máu)
                     if espHealth then
                         espHealth.Enabled = _G.ESPHealth  -- Hiển thị ESP Health nếu tính năng bật
                         -- Cập nhật số máu và thanh máu theo thời gian
                         local humanoid = character:FindFirstChild("Humanoid")
                         if humanoid then
+                            local healthLabel = espHealth:FindFirstChild("TextLabel")
+                            local healthFill = espHealth:FindFirstChild("Frame"):FindFirstChild("Frame")
+                            if healthLabel then
+                                -- Cập nhật số máu
+                                healthLabel.Text = "HP: " .. math.floor(humanoid.Health)
+                            end
+                            if healthFill then
                                 -- Cập nhật phần hiển thị thanh máu
                                 healthFill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
                             end
