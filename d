@@ -133,7 +133,13 @@ end
                     if espName then
                         espName.Enabled = _G.ESP and _G.ESPName  -- Hiển thị ESP Name nếu tính năng bật
                     end
-
+                      
+                   -- Cập nhật màu sắc cho tên
+                    local label = espName:FindFirstChild("TextLabel")
+                     if label then
+                       label.TextColor3 = _G.NameColor  -- Cập nhật màu tên
+                    end
+         
                    -- Cập nhật ESP Health (số máu và thanh máu)
                     if espHealth then
                         espHealth.Enabled = _G.ESPHealth  -- Hiển thị ESP Health nếu tính năng bật
