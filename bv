@@ -2,7 +2,7 @@ _G.ESP = false
 _G.ESPName = false  -- Tính năng hiển thị tên
 _G.ESPHealth = false  -- Tính năng hiển thị thanh máu và số máu
 _G.ESPColor = Color3.fromRGB(255, 255, 255)
-_G.ShowDistance = false  -- Thêm tính năng hiển thị khoảng cách
+_G.NameColor = Color3.fromRGB(255, 255, 255)  -- Thêm màu cho ESP Name
 
 pcall(
     function()
@@ -34,18 +34,17 @@ pcall(
                         local billboard = Instance.new("BillboardGui")
                         billboard.Name = "ESPName"
                         billboard.Adornee = character:FindFirstChild("Head")
-                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.Size = UDim2.new(0, 100, 0, 30)  -- Giảm kích thước để làm nhỏ gọn
                         billboard.StudsOffset = Vector3.new(0, 2, 0)
                         billboard.AlwaysOnTop = true
                         billboard.Parent = character
 
                         local label = Instance.new("TextLabel")
                         label.Size = UDim2.new(1, 0, 1, 0)
-                        local nameText = v.Name
-                        label.Text = nameText
-                        label.TextColor3 = _G.ESPColor
+                        label.Text = v.Name
+                        label.TextColor3 = _G.NameColor  -- Sử dụng màu được chọn từ ColorPicker
                         label.TextStrokeTransparency = 0.8  -- Mức độ trong suốt của viền đen
-                        label.TextSize = 16
+                        label.TextSize = 14  -- Giảm kích thước chữ để làm nhỏ gọn
                         label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)  -- Màu đen cho viền
                         label.BackgroundTransparency = 1
                         label.Parent = billboard
@@ -190,6 +189,14 @@ b:Toggle(
     "Show Distance",  -- Thêm toggle cho Show Distance
     function(bool)
         _G.ShowDistance = bool
+    end
+)
+
+b:ColorPicker(
+    "Name Color",  -- Thêm ColorPicker cho ESP Name
+    Color3.fromRGB(255, 255, 255),
+    function(color)
+        _G.NameColor = color  -- Cập nhật màu cho ESP Name
     end
 )
 
