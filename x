@@ -26,7 +26,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local MainTab = Window:CreateTab("HOME", 4483362458) -- Title, Image
+local MainTab = Window:CreateTab("HOME", 🏠) -- Title, Image
 local Section = MainTab:CreateSection("Main")
 
 Rayfield:Notify({
@@ -156,7 +156,7 @@ local Button15 = MainTab:CreateButton({
    end,
 })
 
-local MainTab = Window:CreateTab("Other", "setting") -- Title, Image
+local MainTab = Window:CreateTab("Other", ⚙) -- Title, Image
 local Section = MainTab:CreateSection("Misc")
 
 local Button = MainTab:CreateButton({
@@ -180,7 +180,7 @@ local Button3 = MainTab:CreateButton({
    end,
 })
 
-local MainTab = Window:CreateTab("Credits", "info") -- Title, Image
+local MainTab = Window:CreateTab("Credits", ❗) -- Title, Image
       local Section = MainTab:CreateSection("Creator")
 
 local Button = MainTab:CreateButton({
