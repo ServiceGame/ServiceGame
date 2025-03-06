@@ -180,6 +180,14 @@ local Button3 = MainTab:CreateButton({
    end,
 })
 
+local MainTab = Window:CreateTab("Theme", nil) -- Title, Image
+      local Section = MainTab:CreateSection("Color Hub")
+   Name = "Defaut",
+   Callback = function()
+      Window.ModifyTheme('Default')
+   end,
+})
+
 local MainTab = Window:CreateTab("Credits", nil) -- Title, Image
       local Section = MainTab:CreateSection("Creator")
 
