@@ -182,12 +182,77 @@ local Button3 = MainTab:CreateButton({
 
 local MainTab = Window:CreateTab("Theme", nil) -- Title, Image
       local Section = MainTab:CreateSection("Color Hub")
+
 local Button = MainTab:CreateButton({
-   Name = "Defaulte",
+   Name = "Default",
    Callback = function()
       Window.ModifyTheme('Default')
    end,
 })
+
+local Button2 = MainTab:CreateButton({
+   Name = "AmberGlow",
+   Callback = function()
+      Window.ModifyTheme('AmberGlow')
+   end,
+})
+
+local Button3 = MainTab:CreateButton({
+   Name = "Amethyst",
+   Callback = function()
+      Window.ModifyTheme('Amethyst')
+   end,
+})
+
+local Button4 = MainTab:CreateButton({
+   Name = "Bloom",
+   Callback = function()
+      Window.ModifyTheme('Bloom')
+   end,
+})
+
+local Button5 = MainTab:CreateButton({
+   Name = "DarkBlue",
+   Callback = function()
+      Window.ModifyTheme('DarkBlue')
+   end,
+})
+
+local Button6 = MainTab:CreateButton({
+   Name = "Serenity",
+   Callback = function()
+      Window.ModifyTheme('Serenity')
+   end,
+})
+
+local Button7 = MainTab:CreateButton({
+   Name = "Ocean",
+   Callback = function()
+      Window.ModifyTheme('Ocean')
+   end,
+})
+
+local Button8 = MainTab:CreateButton({
+   Name = "Green",
+   Callback = function()
+      Window.ModifyTheme('Green')
+   end,
+})
+
+local Button9 = MainTab:CreateButton({
+   Name = "Light",
+   Callback = function()
+      Window.ModifyTheme('Light')
+   end,
+})
+
+local Button10 = MainTab:CreateButton({
+   Name = "Pink",
+   Callback = function()
+      Window.ModifyTheme('Pink')
+   end,
+})
+
 
 local MainTab = Window:CreateTab("Credits", nil) -- Title, Image
       local Section = MainTab:CreateSection("Creator")
