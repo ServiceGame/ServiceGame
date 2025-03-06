@@ -54,15 +54,6 @@ pcall(
 if _G.ESPHealth and character:FindFirstChild("Humanoid") and not character:FindFirstChild("ESPHealth") then
     local humanoid = character:FindFirstChild("Humanoid")
 
-    -- Tạo BillboardGui cho thanh máu và số máu
-    local healthBar = Instance.new("BillboardGui")
-    healthBar.Name = "ESPHealth"
-    healthBar.Adornee = character:FindFirstChild("Head")
-    healthBar.Size = UDim2.new(0, 80, 0, 20)  -- Đặt chiều cao của health bar
-    healthBar.StudsOffset = Vector3.new(0, -3, 0)  -- Di chuyển xuống dưới chân
-    healthBar.AlwaysOnTop = true
-    healthBar.Parent = character
-
     -- Tạo Frame cho thanh máu
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(1, 0, 0, 10)  -- Kích thước thanh máu
