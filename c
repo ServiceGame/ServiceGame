@@ -121,22 +121,6 @@ end
                         end
                     end
 
-                    -- Cập nhật trạng thái hiển thị của Highlight và ESP Name
-                    local hl = character:FindFirstChild("Highlight")
-                    local espName = character:FindFirstChild("ESPName")
-                    local espHealth = character:FindFirstChild("ESPHealth")
-
-                    -- Cập nhật Highlight
-                    if hl then
-                        hl.Enabled = _G.ESP  -- Hiển thị Highlight nếu tính năng ESP bật
-                        hl.OutlineColor = _G.ESPColor
-                    end
-
-                    -- Cập nhật ESP Name
-                    if espName then
-                        espName.Enabled = _G.ESP and _G.ESPName  -- Hiển thị ESP Name nếu tính năng bật
-                    end
-
              -- Cập nhật ESP Health (số máu và thanh máu)
                     if espHealth then
                         espHealth.Enabled = _G.ESPHealth  -- Hiển thị ESP Health nếu tính năng bật
