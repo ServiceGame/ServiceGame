@@ -45,9 +45,6 @@ pcall(
                         local label = Instance.new("TextLabel")
                         label.Size = UDim2.new(1, 0, 1, 0)
                         local nameText = v.Name
-                        if _G.ShowDistance then
-                            nameText = nameText .. " [" .. math.floor(distance) .. "m]"  -- Hiển thị khoảng cách trong tên
-                        end
                         label.Text = nameText
                         label.TextColor3 = _G.ESPColor
                         label.TextStrokeTransparency = 0.8  -- Mức độ trong suốt của viền đen
@@ -91,6 +88,37 @@ pcall(
                         healthLabel.TextSize = 14
                         healthLabel.BackgroundTransparency = 1
                         healthLabel.Parent = healthBar
+                    end
+
+                    -- Hiển thị khoảng cách bên phải người chơi nếu tính năng ShowDistance bật
+                    if _G.ShowDistance then
+                        local distanceGui = character:FindFirstChild("DistanceGui")
+                        if not distanceGui then
+                            -- Tạo một BillboardGui cho khoảng cách
+                            distanceGui = Instance.new("BillboardGui")
+                            distanceGui.Name = "DistanceGui"
+                            distanceGui.Adornee = character:FindFirstChild("Head")
+                            distanceGui.Size = UDim2.new(0, 100, 0, 20)
+                            distanceGui.StudsOffset = Vector3.new(1, 0, 0)  -- Đặt khoảng cách bên phải người chơi
+                            distanceGui.AlwaysOnTop = true
+                            distanceGui.Parent = character
+
+                            local distanceLabel = Instance.new("TextLabel")
+                            distanceLabel.Size = UDim2.new(1, 0, 1, 0)
+                            distanceLabel.Text = math.floor((camera.CFrame.Position - character.PrimaryPart.Position).Magnitude) .. "m"
+                            distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Màu trắng cho khoảng cách
+                            distanceLabel.TextStrokeTransparency = 0.8  -- Mức độ trong suốt của viền đen
+                            distanceLabel.TextSize = 16
+                            distanceLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)  -- Màu đen cho viền
+                            distanceLabel.BackgroundTransparency = 1
+                            distanceLabel.Parent = distanceGui
+                        end
+                    else
+                        -- Nếu không bật ShowDistance, xóa các khoảng cách đã hiển thị
+                        local distanceGui = character:FindFirstChild("DistanceGui")
+                        if distanceGui then
+                            distanceGui:Destroy()
+                        end
                     end
 
                     -- Cập nhật trạng thái hiển thị của Highlight và ESP Name
