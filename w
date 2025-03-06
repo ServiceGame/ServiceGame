@@ -9,6 +9,7 @@ local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:WaitForChild("Balls")
 local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
 local abilityButtonPress = replicatedStorage.Remotes.AbilityButtonPress
+local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
 
 -- Load UI Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -75,6 +76,11 @@ local function checkBallDistance()
     if timeToImpact < getDynamicThreshold(focusedBall.Velocity.Magnitude) then
         parryButtonPress:Fire()
         Rayfield:Notify({Title = "AutoParry", Content = "Parried Successfully!", Duration = 0.5})
+    end
+    
+    -- Attack ball if it is within parry distance
+    if (focusedBall.Position - character.PrimaryPart.Position).Magnitude <= sliderValue then
+        attackButtonPress:Fire()
     end
 end
 
