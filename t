@@ -246,14 +246,6 @@ local Button9 = MainTab:CreateButton({
    end,
 })
 
-local Button10 = MainTab:CreateButton({
-   Name = "Pink",
-   Callback = function()
-      Window.ModifyTheme('Pink')
-   end,
-})
-
-
 local MainTab = Window:CreateTab("Credits", nil) -- Title, Image
       local Section = MainTab:CreateSection("Creator")
 
