@@ -56,7 +56,8 @@ local IMMEDIATE_PARRY_DISTANCE = 20  -- Increased auto-parry range
 local IMMEDIATE_HIGH_VELOCITY_THRESHOLD = 100  -- Handles high-speed balls
 local AUTO_ATTACK_THRESHOLD = 5  -- Immediate attack when ball is extremely close
 local ABILITY_TRIGGER_DISTANCE = 15  -- Auto ability activation distance
-local LEGIT_PARRY_DELAY = 0.15  -- Small delay for legit mode
+local LEGIT_PARRY_DELAY = 0.15
+local HIGH_PING_PARRY_DELAY = 0.03  -- Optimize for high ping users  -- Small delay for legit mode
 
 -- Variables
 local sliderValue = 30  -- Increased default parry distance
@@ -125,7 +126,9 @@ RunService.Heartbeat:Connect(function()
         HRP.CFrame = HRP.CFrame + correction  -- Adjust player positioning to counter curve
         
         if parryMode == "Legit" then
-            task.wait(LEGIT_PARRY_DELAY)  -- Small delay to simulate manual timing
+            task.wait(LEGIT_PARRY_DELAY)
+        elseif parryMode == "High Ping" then
+            task.wait(HIGH_PING_PARRY_DELAY)  -- Small delay to simulate manual timing
         end
         
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
@@ -242,7 +245,7 @@ local AutoAbilityToggle = AutoParryTab:CreateToggle({
 
 local ParryModeDropdown = AutoParryTab:CreateDropdown({
     Name = "Auto Parry Mode",
-    Options = {"Blatant", "Legit"},
+    Options = {"Blatant", "Legit", "High Ping"},
     CurrentOption = parryMode,
     Callback = function(value)
         parryMode = value
