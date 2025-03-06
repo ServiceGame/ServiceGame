@@ -179,40 +179,41 @@ b:Toggle(
     end
 )
 
+b:ColorPicker(
+    "Color",
+    Color3.fromRGB(255, 255, 255),
+    function(color)
+        _G.ESPColor = color
+    end
+)
+
+
 b:Toggle(
-    "ESP Name",  -- Thêm toggle cho ESP Name
+    "Name",  -- Thêm toggle cho ESP Name
     function(bool)
         _G.ESPName = bool
     end
 )
 
-b:Toggle(
-    "ESP Health",  -- Thêm toggle cho ESP Health (số máu và thanh máu)
-    function(bool)
-        _G.ESPHealth = bool
-    end
-)
-
-b:Toggle(
-    "Show Distance",  -- Thêm toggle cho Show Distance
-    function(bool)
-        _G.ShowDistance = bool
-    end
-)
-
 b:ColorPicker(
-    "Name Color",  -- Thêm ColorPicker cho ESP Name
+    "Color",  -- Thêm ColorPicker cho ESP Name
     Color3.fromRGB(255, 255, 255),
     function(color)
         _G.NameColor = color  -- Cập nhật màu cho ESP Name
     end
 )
 
-b:ColorPicker(
-    "Color",
-    Color3.fromRGB(255, 255, 255),
-    function(color)
-        _G.ESPColor = color
+b:Toggle(
+    "HP Bar",  -- Thêm toggle cho ESP Health (số máu và thanh máu)
+    function(bool)
+        _G.ESPHealth = bool
+    end
+)
+
+b:Toggle(
+    "Distance",  -- Thêm toggle cho Show Distance
+    function(bool)
+        _G.ShowDistance = bool
     end
 )
 
