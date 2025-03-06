@@ -1,0 +1,111 @@
+-- Ultra-Fast Optimized AutoParry Script
+local workspace = game:GetService("Workspace")
+local players = game:GetService("Players")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local localPlayer = players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local ballsFolder = workspace:WaitForChild("Balls")
+local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
+local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
+
+-- Load Optimized UI Library
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+
+-- Create UI Window
+local Window = Rayfield:CreateWindow({
+    Name = "AutoParry GUI",
+    LoadingTitle = "Blade Ball AutoParry",
+    LoadingSubtitle = "Ultra Fast Mode",
+    ConfigurationSaving = {Enabled = false},
+    KeySystem = false
+})
+
+local AutoParryTab = Window:CreateTab("AutoParry")
+local SettingsSection = AutoParryTab:CreateSection("Settings")
+
+-- Constants (Extreme Reflex Mode)
+local BASE_THRESHOLD = 0.05  -- Faster reflex time
+local IMMEDIATE_PARRY_DISTANCE = 20  -- Increased auto-parry range
+local IMMEDIATE_HIGH_VELOCITY_THRESHOLD = 100  -- Handles high-speed balls
+
+-- Variables
+local sliderValue = 30  -- Increased default parry distance
+local isRunning = false
+local autoAttack = true  -- Enabled by default
+
+-- Optimized function to get closest ball instantly
+local function getClosestBall()
+    local bestBall = nil
+    local minDistance = math.huge
+    for _, ball in ipairs(ballsFolder:GetChildren()) do
+        if ball:GetAttribute("realBall") then
+            local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                bestBall = ball
+            end
+        end
+    end
+    return bestBall
+end
+
+-- Main auto-parry logic with ultra-fast reflexes
+RunService.Heartbeat:Connect(function()
+    if not isRunning then return end
+
+    local ball, HRP = getClosestBall(), localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not ball or not HRP then return end
+
+    local distance = (HRP.Position - ball.Position).Magnitude
+    if ball:GetAttribute("target") == localPlayer.Name and distance <= IMMEDIATE_PARRY_DISTANCE then
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        Rayfield:Notify({Title = "AutoParry", Content = "Ultra-Fast Parry!", Duration = 0.3})
+    end
+
+    if autoAttack and distance <= sliderValue then
+        attackButtonPress:Fire()
+    end
+end)
+
+-- UI Elements
+local AutoParryToggle = AutoParryTab:CreateToggle({
+    Name = "Enable AutoParry (Ultra-Fast)",
+    CurrentValue = false,
+    Callback = function(value)
+        isRunning = value
+        Rayfield:Notify({Title = "AutoParry", Content = value and "Activated" or "Deactivated", Duration = 1})
+    end
+})
+
+local DistanceSlider = AutoParryTab:CreateSlider({
+    Name = "Parry Distance",
+    Range = {10, 50},
+    Increment = 1,
+    CurrentValue = sliderValue,
+    Callback = function(value)
+        sliderValue = value
+    end
+})
+
+local AutoAttackToggle = AutoParryTab:CreateToggle({
+    Name = "Auto Attack After Parry",
+    CurrentValue = autoAttack,
+    Callback = function(value)
+        autoAttack = value
+    end
+})
+
+-- Event bindings
+localPlayer.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.One then isRunning = true end
+    if input.KeyCode == Enum.KeyCode.Two then isRunning = false end
+end)
