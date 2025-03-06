@@ -86,14 +86,14 @@ Rayfield:Notify({
 })
 
 local aToggle = MainTab:CreateToggle({
-    Name = "ESP",
+    Name = "Chams",
     Callback = function(bool)
     _G.ESP = bool
     end,
 })
 
 local b:ColorPicker({
-    Name = "ESP Color",
+    Name = "Color",
     Color3.fromRGB(255, 255, 255),
     Callback = function(color)
     _G.ESPColor = color
