@@ -1,4 +1,4 @@
--- Ultra-Fast Optimized AutoParry Script with Anti-AFK, Improved Auto Attack, Anti-Curve, Custom Ball Direction, Auto Ability, Auto Parry Mode, ESP, and Auto Config Load
+-- Ultra-Fast Optimized AutoParry Script with Error Handling
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -12,27 +12,26 @@ local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:WaitForChild("Balls")
 
 -- Validate Remote Events
-local parryButtonPress = replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
-if not parryButtonPress then
-    warn("ParryButtonPress is missing from ReplicatedStorage.Remotes")
+local function getRemote(name)
+    local remote = replicatedStorage.Remotes:FindFirstChild(name)
+    if not remote then
+        warn(name .. " is missing from ReplicatedStorage.Remotes")
+    end
+    return remote
 end
 
-local attackButtonPress = replicatedStorage.Remotes:FindFirstChild("AttackButtonPress")
-if not attackButtonPress then
-    warn("AttackButtonPress is missing from ReplicatedStorage.Remotes")
-end
+local parryButtonPress = getRemote("ParryButtonPress")
+local abilityButtonPress = getRemote("AbilityButtonPress")
 
-local abilityButtonPress = replicatedStorage.Remotes:FindFirstChild("AbilityButtonPress")
-if not abilityButtonPress then
-    warn("AbilityButtonPress is missing from ReplicatedStorage.Remotes")
-end
-
--- Load Optimized UI Library with Error Handling
+-- Load Rayfield UI Library with Error Handling
 local Rayfield
 local success, err = pcall(function()
-    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+    return loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 end)
-if not success then
+
+if success then
+    Rayfield = err
+else
     warn("Failed to load Rayfield UI Library: " .. err)
 end
 
@@ -89,7 +88,7 @@ local ballDirection = "Forward"
 local parryMode = "Blatant"
 local ESPEnabled = false
 
--- Additional Features from New Script
+-- Additional Features
 local DebugMode = false
 local SafetyMode = true
 local FastMode = true
@@ -164,5 +163,4 @@ RunService.Heartbeat:Connect(function()
         elseif parryMode == "High Ping" then task.wait(HIGH_PING_PARRY_DELAY) end
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
-    if autoAttack and attackButtonPress and distance <= sliderValue then attackButtonPress:FireServer() end
 end)
