@@ -24,7 +24,7 @@ local abilityButtonPress = getRemote("AbilityButtonPress")
 
 -- Load Sirius UI Library
 local success, Sirius = pcall(function()
-    return loadstring(game:HttpGet('https://sirius.menu/sirius'))()
+    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()()
 end)
 
 if not success then
