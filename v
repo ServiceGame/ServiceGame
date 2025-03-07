@@ -44,8 +44,7 @@ MainTab:CreateToggle({Name = "Auto Ability", Default = true, Callback = function
 MainTab:CreateDropdown({Name = "Parry Mode", Options = {"Blatant", "Legit", "High Ping"}, Callback = function(option) parryMode = option end})
 MainTab:CreateToggle({Name = "ESP Ball", Default = false, Callback = function(value) ESPEnabled = value end})
 
-ConfigTab:CreateButton({Name = "Save Config", Callback = autoSaveConfig})
-ConfigTab:CreateButton({Name = "Load Config", Callback = autoLoadConfig})
+
 
 -- Config File Path
 local configFilePath = "AutoParryConfig.json"
@@ -155,4 +154,14 @@ RunService.Heartbeat:Connect(function()
         elseif parryMode == "High Ping" then task.wait(HIGH_PING_PARRY_DELAY) end
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
+end)
+-- Event bindings
+localPlayer.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.One then isRunning = true autoSaveConfig() end
+    if input.KeyCode == Enum.KeyCode.Two then isRunning = false autoSaveConfig() end
 end)
