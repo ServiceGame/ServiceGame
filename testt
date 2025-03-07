@@ -5,17 +5,14 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
--- Load additional library
-loadstring(game:HttpGet('https://sirius.menu/sirius'))()
+-- Load new UI library
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:WaitForChild("Balls")
 local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
 local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
-
--- Load Optimized UI Library
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
 -- Create UI Window
 local Window = Rayfield:CreateWindow({
