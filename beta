@@ -10,9 +10,22 @@ local HttpService = game:GetService("HttpService")
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:WaitForChild("Balls")
-local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
-local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
-local abilityButtonPress = replicatedStorage.Remotes.AbilityButtonPress
+
+-- Validate Remote Events
+local parryButtonPress = replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
+if not parryButtonPress then
+    warn("ParryButtonPress is missing from ReplicatedStorage.Remotes")
+end
+
+local attackButtonPress = replicatedStorage.Remotes:FindFirstChild("AttackButtonPress")
+if not attackButtonPress then
+    warn("AttackButtonPress is missing from ReplicatedStorage.Remotes")
+end
+
+local abilityButtonPress = replicatedStorage.Remotes:FindFirstChild("AbilityButtonPress")
+if not abilityButtonPress then
+    warn("AbilityButtonPress is missing from ReplicatedStorage.Remotes")
+end
 
 -- Load Optimized UI Library
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
@@ -100,7 +113,7 @@ end
 
 -- Auto Ability Activation
 local function useAbilityIfNeeded(distance, ball)
-    if autoAbility and distance <= ABILITY_TRIGGER_DISTANCE and ball.Velocity.Magnitude >= IMMEDIATE_HIGH_VELOCITY_THRESHOLD then
+    if autoAbility and abilityButtonPress and distance <= ABILITY_TRIGGER_DISTANCE and ball.Velocity.Magnitude >= IMMEDIATE_HIGH_VELOCITY_THRESHOLD then
         abilityButtonPress:Fire()
         Rayfield:Notify({Title = "Auto Ability", Content = "Used Ability to Defend!", Duration = 1})
     end
@@ -143,23 +156,5 @@ RunService.Heartbeat:Connect(function()
         elseif parryMode == "High Ping" then task.wait(HIGH_PING_PARRY_DELAY) end
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
-    if autoAttack and distance <= sliderValue then replicatedStorage.Remotes.AttackEvent:FireServer() end
+    if autoAttack and attackButtonPress and distance <= sliderValue then attackButtonPress:FireServer() end
 end)
-
--- UI Window
-local Window = Rayfield:CreateWindow({
-    Name = "ServiceGame",
-    LoadingTitle = "Blade Ball",
-    LoadingSubtitle = "by Wibu",
-    ConfigurationSaving = {Enabled = false},
-    KeySystem = false
-})
-
-local AutoParryTab = Window:CreateTab("Combat")
-local SettingsSection = AutoParryTab:CreateSection("Settings")
-
-local AutoParryToggle = AutoParryTab:CreateToggle({Name = "Enable AutoParry", CurrentValue = isRunning, Callback = function(value) isRunning = value autoSaveConfig() end})
-local AutoAbilityToggle = AutoParryTab:CreateToggle({Name = "Auto Use Ability", CurrentValue = autoAbility, Callback = function(value) autoAbility = value autoSaveConfig() end})
-local ParryModeDropdown = AutoParryTab:CreateDropdown({Name = "Auto Parry Mode", Options = {"Blatant", "Legit", "High Ping"}, CurrentOption = parryMode, Callback = function(value) parryMode = value autoSaveConfig() end})
-local DistanceSlider = AutoParryTab:CreateSlider({Name = "Parry Distance", Range = {10, 50}, Increment = 1, CurrentValue = sliderValue, Callback = function(value) sliderValue = value autoSaveConfig() end})
-local ESPToggle = AutoParryTab:CreateToggle({Name = "Enable Ball ESP", CurrentValue = ESPEnabled, Callback = function(value) ESPEnabled = value autoSaveConfig() end})
