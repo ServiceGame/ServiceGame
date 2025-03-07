@@ -78,7 +78,7 @@ removeLagObjects()
 -- UI Setup
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/FakeAngles/PasteWare/refs/heads/main/linoralib.lua"))()
 local Window = Library:CreateWindow({
-    Title = 'Optimized Script - War Tycoon',
+    Title = 'SeriveGame - War Tycoon',
     Center = true,
     AutoShow = true,
     TabPadding = 8,
