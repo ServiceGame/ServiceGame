@@ -27,8 +27,14 @@ if not abilityButtonPress then
     warn("AbilityButtonPress is missing from ReplicatedStorage.Remotes")
 end
 
--- Load Optimized UI Library
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- Load Optimized UI Library with Error Handling
+local Rayfield
+local success, err = pcall(function()
+    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+end)
+if not success then
+    warn("Failed to load Rayfield UI Library: " .. err)
+end
 
 -- Config File Path
 local configFilePath = "AutoParryConfig.json"
@@ -115,7 +121,9 @@ end
 local function useAbilityIfNeeded(distance, ball)
     if autoAbility and abilityButtonPress and distance <= ABILITY_TRIGGER_DISTANCE and ball.Velocity.Magnitude >= IMMEDIATE_HIGH_VELOCITY_THRESHOLD then
         abilityButtonPress:Fire()
-        Rayfield:Notify({Title = "Auto Ability", Content = "Used Ability to Defend!", Duration = 1})
+        if Rayfield then
+            Rayfield:Notify({Title = "Auto Ability", Content = "Used Ability to Defend!", Duration = 1})
+        end
     end
 end
 
