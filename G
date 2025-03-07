@@ -22,29 +22,30 @@ end
 
 local abilityButtonPress = getRemote("AbilityButtonPress")
 
--- Load Sirius UI Library
+-- Load Rayfield UI Library
 local success, Sirius = pcall(function()
-    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()()
+    return loadstring(game:HttpGet('https://sirius.menu/rayfield', true))()
 end)
 
-if not success then
-    warn("Failed to load Sirius UI Library: " .. tostring(Sirius))
+if not success or not Sirius then
+    warn("Failed to load Rayfield UI Library: " .. tostring(Sirius))
+    return
 end
 
 -- Create UI
-local Window = Sirius:Window({Name = "AutoParry Menu", Theme = "Dark", Size = UDim2.new(0, 400, 0, 300)})
-local MainTab = Window:Tab({Name = "Main"})
-local ConfigTab = Window:Tab({Name = "Config"})
+local Window = Sirius:CreateWindow({Name = "AutoParry Menu", Theme = "Dark", Size = UDim2.new(0, 400, 0, 300)})
+local MainTab = Window:CreateTab("Main")
+local ConfigTab = Window:CreateTab("Config")
 
 -- UI Elements
-MainTab:Toggle({Name = "Enable AutoParry", Default = false, Callback = function(value) isRunning = value end})
-MainTab:Toggle({Name = "Auto Attack", Default = true, Callback = function(value) autoAttack = value end})
-MainTab:Toggle({Name = "Auto Ability", Default = true, Callback = function(value) autoAbility = value end})
-MainTab:Dropdown({Name = "Parry Mode", Options = {"Blatant", "Legit", "High Ping"}, Callback = function(option) parryMode = option end})
-MainTab:Toggle({Name = "ESP Ball", Default = false, Callback = function(value) ESPEnabled = value end})
+MainTab:CreateToggle({Name = "Enable AutoParry", Default = false, Callback = function(value) isRunning = value end})
+MainTab:CreateToggle({Name = "Auto Attack", Default = true, Callback = function(value) autoAttack = value end})
+MainTab:CreateToggle({Name = "Auto Ability", Default = true, Callback = function(value) autoAbility = value end})
+MainTab:CreateDropdown({Name = "Parry Mode", Options = {"Blatant", "Legit", "High Ping"}, Callback = function(option) parryMode = option end})
+MainTab:CreateToggle({Name = "ESP Ball", Default = false, Callback = function(value) ESPEnabled = value end})
 
-ConfigTab:Button({Name = "Save Config", Callback = autoSaveConfig})
-ConfigTab:Button({Name = "Load Config", Callback = autoLoadConfig})
+ConfigTab:CreateButton({Name = "Save Config", Callback = autoSaveConfig})
+ConfigTab:CreateButton({Name = "Load Config", Callback = autoLoadConfig})
 
 -- Config File Path
 local configFilePath = "AutoParryConfig.json"
