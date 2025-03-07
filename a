@@ -20,19 +20,15 @@ local function getRemote(name)
     return remote
 end
 
-local parryButtonPress = getRemote("ParryButtonPress")
 local abilityButtonPress = getRemote("AbilityButtonPress")
 
--- Load Rayfield UI Library with Error Handling
-local Rayfield
-local success, err = pcall(function()
-    return loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- Load Sirius UI Library
+local success, Sirius = pcall(function()
+    return loadstring(game:HttpGet('https://sirius.menu/sirius'))()
 end)
 
-if success then
-    Rayfield = err
-else
-    warn("Failed to load Rayfield UI Library: " .. err)
+if not success then
+    warn("Failed to load Sirius UI Library: " .. tostring(Sirius))
 end
 
 -- Config File Path
@@ -120,8 +116,8 @@ end
 local function useAbilityIfNeeded(distance, ball)
     if autoAbility and abilityButtonPress and distance <= ABILITY_TRIGGER_DISTANCE and ball.Velocity.Magnitude >= IMMEDIATE_HIGH_VELOCITY_THRESHOLD then
         abilityButtonPress:Fire()
-        if Rayfield then
-            Rayfield:Notify({Title = "Auto Ability", Content = "Used Ability to Defend!", Duration = 1})
+        if Sirius then
+            Sirius:Notify({Title = "Auto Ability", Content = "Used Ability to Defend!", Duration = 1})
         end
     end
 end
