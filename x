@@ -1,4 +1,4 @@
--- Ultra-Fast Optimized AutoParry Script with Error Handling
+-- Ultra-Fast Optimized AutoParry Script with Error Handling & UI Menu
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -31,6 +31,21 @@ if not success then
     warn("Failed to load Sirius UI Library: " .. tostring(Sirius))
 end
 
+-- Create UI
+local Window = Sirius:Window({Name = "AutoParry Menu", Theme = "Dark", Size = UDim2.new(0, 400, 0, 300)})
+local MainTab = Window:Tab({Name = "Main"})
+local ConfigTab = Window:Tab({Name = "Config"})
+
+-- UI Elements
+MainTab:Toggle({Name = "Enable AutoParry", Default = false, Callback = function(value) isRunning = value end})
+MainTab:Toggle({Name = "Auto Attack", Default = true, Callback = function(value) autoAttack = value end})
+MainTab:Toggle({Name = "Auto Ability", Default = true, Callback = function(value) autoAbility = value end})
+MainTab:Dropdown({Name = "Parry Mode", Options = {"Blatant", "Legit", "High Ping"}, Callback = function(option) parryMode = option end})
+MainTab:Toggle({Name = "ESP Ball", Default = false, Callback = function(value) ESPEnabled = value end})
+
+ConfigTab:Button({Name = "Save Config", Callback = autoSaveConfig})
+ConfigTab:Button({Name = "Load Config", Callback = autoLoadConfig})
+
 -- Config File Path
 local configFilePath = "AutoParryConfig.json"
 
@@ -41,8 +56,6 @@ local function autoSaveConfig()
         autoAttack = autoAttack,
         autoAbility = autoAbility,
         parryMode = parryMode,
-        sliderValue = sliderValue,
-        ballDirection = ballDirection,
         ESPEnabled = ESPEnabled
     }
     writefile(configFilePath, HttpService:JSONEncode(config))
@@ -56,8 +69,6 @@ local function autoLoadConfig()
         autoAttack = config.autoAttack
         autoAbility = config.autoAbility
         parryMode = config.parryMode
-        sliderValue = config.sliderValue
-        ballDirection = config.ballDirection
         ESPEnabled = config.ESPEnabled
     end
 end
@@ -75,27 +86,11 @@ local LEGIT_PARRY_DELAY = 0.15
 local HIGH_PING_PARRY_DELAY = 0.03
 
 -- Variables
-local sliderValue = 30
 local isRunning = false
 local autoAttack = true
 local autoAbility = true
-local antiAFK = true
-local ballDirection = "Forward"
 local parryMode = "Blatant"
 local ESPEnabled = false
-
--- Additional Features
-local DebugMode = false
-local SafetyMode = true
-local FastMode = true
-local BeastMode = false
-local AutoSpamParry = true
-local RageParry = false
-local FollowBall = false
-local CurveBall = true
-local FreezeBall = false
-local AimCamera = false
-local AutoMove = false
 
 -- Optimized function to get closest ball instantly
 local function getClosestBall()
