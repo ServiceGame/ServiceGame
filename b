@@ -5,6 +5,7 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
+local Camera = workspace.CurrentCamera
 
 -- Kiểm tra và tải Rayfield UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -51,12 +52,17 @@ local function getClosestBall()
     return bestBall
 end
 
+local function isBallOnScreen(ball)
+    local screenPosition, onScreen = Camera:WorldToViewportPoint(ball.Position)
+    return onScreen
+end
+
 local function isBallDangerous(ball)
     if not character or not character.PrimaryPart or not ball then return false end
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(30) -- Nếu góc nhỏ, bóng đang hướng về mình
+    return angle < math.rad(30) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
 end
 
 local function timeUntilImpact(ball)
