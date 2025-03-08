@@ -148,7 +148,6 @@ VisualTab:CreateToggle({
     end
 })
 
-
 function initializate(dataFolder_name: string)
     local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
     nurysium_Data.Name = dataFolder_name
@@ -158,82 +157,68 @@ function initializate(dataFolder_name: string)
     hit_Sound.Volume = 5
 end
 
-local function get_closest_entity(Object: Part)
-    task.spawn(function()
-        local closest
-        local max_distance = math.huge
-
-        for index, entity in workspace.Alive:GetChildren() do
-            if entity.Name ~= Players.LocalPlayer.Name then
-                local distance = (Object.Position - entity.HumanoidRootPart.Position).Magnitude
-
-                if distance < max_distance then
-                    closest_Entity = entity
-                    max_distance = distance
-                end
-
+local function get_closest_entity(Object)
+    local closest, max_distance = nil, 30
+    
+    for _, entity in ipairs(workspace.Alive:GetChildren()) do
+        if entity ~= Players.LocalPlayer and entity:FindFirstChild("HumanoidRootPart") then
+            local distance = (Object.Position - entity.HumanoidRootPart.Position).Magnitude
+            if distance < max_distance then
+                closest, max_distance = entity, distance
             end
         end
-
-        return closest_Entity
-    end)
+    end
+    return closest
 end
 
---// Thanks Me for this.
 function resolve_parry_Remote()
-    for _, value in Services do
-        local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
-
-        if not temp_remote then
-            continue
+    for _, service in pairs({game:GetService('AdService'), game:GetService('SocialService')}) do
+        local temp_remote = service:FindFirstChildOfClass('RemoteEvent')
+        if temp_remote and temp_remote.Name:find('\n') then
+            parry_remote = temp_remote
+            break
         end
-
-        if not temp_remote.Name:find('\n') then
-            continue
-        end
-
-        parry_remote = temp_remote
     end
 end
 
 local aura_table = {
     canParry = true,
-    is_Spamming = false,
-
-    parry_Range = 0,
-    spam_Range = 0,  
     hit_Count = 0,
-
-    hit_Time = tick(),
-    ball_Warping = tick(),
-    is_ball_Warping = false
+    hit_Time = tick()
 }
 
-ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
-    if getgenv().hit_sound_Enabled then
-        hit_Sound:Play()
-    end
-
-    if getgenv().hit_effect_Enabled then
-        local hit_effect = game:GetObjects("rbxassetid://17407244385")[1]
-
-        hit_effect.Parent = Nurysium_Util.getBall()
-        hit_effect:Emit(3)
+RunService.RenderStepped:Connect(function()
+    if not getgenv().aura_Enabled then return end
+    
+    local ping = math.max(Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10, 5)
+    local ball = Nurysium_Util.getBall()
+    
+    if not ball or ball:GetAttribute('target') ~= local_player.Name or not aura_table.canParry then return end
+    
+    closest_Entity = get_closest_entity(local_player.Character.PrimaryPart)
+    if not closest_Entity then return end
+    
+    local ball_Distance = local_player:DistanceFromCharacter(ball.Position)
+    local parry_Range = math.max(math.max(ping, 4) + ball.AssemblyLinearVelocity.Magnitude / 3.5, 9.5)
+    
+    if ball_Distance <= parry_Range and aura_table.hit_Count < 3 then
+        parry_remote:FireServer(0.5, camera.CFrame, {[closest_Entity.Name] = closest_Entity.HumanoidRootPart.Position}, {closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y}, false)
+        aura_table.canParry = false
+        aura_table.hit_Time = tick()
+        aura_table.hit_Count = aura_table.hit_Count + 1
         
-        task.delay(5, function()
-            hit_effect:Destroy()
+        task.delay(0.15, function()
+            aura_table.hit_Count = aura_table.hit_Count - 1
         end)
-
+    end
+    
+    if (tick() - aura_table.hit_Time) >= 1 then
+        aura_table.canParry = true
     end
 end)
 
-ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
-    aura_table.hit_Count += 1
+resolve_parry_Remote()
 
-    task.delay(0.15, function()
-        aura_table.hit_Count -= 1
-    end)
-end)
 
 workspace:WaitForChild("Balls").ChildRemoved:Connect(function(child)
     aura_table.hit_Count = 0
