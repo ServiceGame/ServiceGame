@@ -20,6 +20,7 @@ getgenv().hit_effect_Enabled = false
 getgenv().trail_Enabled = false
 getgenv().kill_effect_Enabled = false
 getgenv().shaders_effect_Enabled = false
+getgenv().auto_HitBall_Enabled = false
 
 -- Tải thư viện
 local library = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -40,6 +41,7 @@ local SettingsTab = Window:CreateTab("Settings")
 
 -- Thêm Toggle Button
 CombatTab:CreateToggle({ Name = "Auto Parry", CurrentValue = false, Callback = function(t) getgenv().aura_Enabled = t end })
+CombatTab:CreateToggle({ Name = "Auto Hit Ball", CurrentValue = false, Callback = function(t) getgenv().auto_HitBall_Enabled = t end })
 CombatTab:CreateToggle({ Name = "Hit Sound", CurrentValue = false, Callback = function(t) getgenv().hit_sound_Enabled = t end })
 MiscTab:CreateToggle({ Name = "Hit Effect", CurrentValue = false, Callback = function(t) getgenv().hit_effect_Enabled = t end })
 MiscTab:CreateToggle({ Name = "Trail", CurrentValue = false, Callback = function(t) getgenv().trail_Enabled = t end })
@@ -63,10 +65,18 @@ local function get_closest_entity()
     return closest
 end
 
--- Xử lý Auto Parry
+-- Xử lý Auto Parry và Auto Hit Ball
 RunService.PreRender:Connect(function()
     if getgenv().aura_Enabled and closest_Entity then
         parry_remote:FireServer(0.5, camera.CFrame, { [closest_Entity.Name] = closest_Entity.PrimaryPart.Position }, false)
+    end
+    
+    if getgenv().auto_HitBall_Enabled then
+        for _, ball in pairs(workspace.Balls:GetChildren()) do
+            if ball:IsA("BasePart") and (local_player.Character.PrimaryPart.Position - ball.Position).Magnitude < 15 then
+                ReplicatedStorage.Remotes.HitBall:FireServer(ball)
+            end
+        end
     end
 end)
 
