@@ -11,7 +11,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 local Tab = Window:CreateTab("Main", 4483362458) -- Title, Image
-local Section = Tab:CreateSection("Trade op")
+local Section = Tab:CreateSection("Trade")
 
 local TextBox = Tab:CreateInput({
     Name = "Player Name",
@@ -182,6 +182,7 @@ local function updateRolesInfo()
         wait(1)
     end
 end
+
 local highlight = Instance.new("Highlight")
 
         game:GetService("RunService").RenderStepped:Connect(
@@ -273,26 +274,6 @@ game.Players.PlayerRemoving:Connect(function(player)
         billboard:Destroy()
     end
 end)
-
-local ToggleChams = Tab:CreateToggle({
-    Name = "Chams",
-    CurrentValue = false,
-    Flag = "ChamsESP",
-    Callback = function(state)
-        getgenv().ChamsEnabled = state
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
-                if player.Character then
-                    for _, part in ipairs(player.Character:GetChildren()) do
-                        if part:IsA("Highlight") then
-                            part.Enabled = state
-                        end
-                    end
-                end
-            end
-        end
-    end,
-})
 
 local ToggleAllESP = Tab:CreateToggle({
     Name = "Every Player ESP",
