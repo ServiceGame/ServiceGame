@@ -45,8 +45,12 @@ task.spawn(function()
 end)
 
 -- Constants
-local BASE_THRESHOLD = 0.015 -- Tăng tốc phản xạ
+local BASE_THRESHOLD = 0.015
 local IMMEDIATE_PARRY_DISTANCE = 7
+local IMMEDIATE_HIGH_VELOCITY_THRESHOLD = 85 -- Ngưỡng vận tốc cao
+local VELOCITY_SCALING_FACTOR_FAST = 0.05  -- Hệ số điều chỉnh khoảng cách parry khi bóng nhanh
+local VELOCITY_SCALING_FACTOR_SLOW = 0.1   -- Hệ số điều chỉnh khoảng cách parry khi bóng chậm
+
 local sliderValue = 15
 local isRunning = false
 local autoAttack = false
@@ -89,7 +93,7 @@ local function timeUntilImpact(ball)
     return relativeVelocity > 0 and (distance - sliderValue) / relativeVelocity or math.huge
 end
 
-RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc độ phản hồi
+RunService.Heartbeat:Connect(function()
     if not isRunning or not character or not character.PrimaryPart then return end
 
     local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
@@ -99,22 +103,30 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     local timeToImpact = timeUntilImpact(ball)
     local velocity = ball.Velocity.Magnitude
 
+    -- Điều chỉnh khoảng cách parry dựa vào vận tốc bóng
+    local adjustedParryDistance = IMMEDIATE_PARRY_DISTANCE
+    if velocity >= IMMEDIATE_HIGH_VELOCITY_THRESHOLD then
+        adjustedParryDistance = adjustedParryDistance + velocity * VELOCITY_SCALING_FACTOR_FAST
+    else
+        adjustedParryDistance = adjustedParryDistance + velocity * VELOCITY_SCALING_FACTOR_SLOW
+    end
+
     if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
-        if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
+        if distance <= adjustedParryDistance or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.02) -- Giảm thời gian chờ để parry nhanh hơn
+                task.wait(0.02)
                 distance = (HRP.Position - ball.Position).Magnitude
-            until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
+            until distance > adjustedParryDistance or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and distance <= adjustedParryDistance then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.02)
             distance = (HRP.Position - ball.Position).Magnitude
-        until distance > IMMEDIATE_PARRY_DISTANCE
+        until distance > adjustedParryDistance
     end
     
     if antiCurveBall and velocity > 50 then
@@ -129,58 +141,32 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
 end)
 
 -- UI Controls
-AutoParryTab:CreateToggle({
-    Name = "Enable AutoParry",
-    CurrentValue = false,
+AutoParryTab:CreateSlider({
+    Name = "High Velocity Threshold",
+    Range = {50, 150},
+    Increment = 5,
+    CurrentValue = IMMEDIATE_HIGH_VELOCITY_THRESHOLD,
     Callback = function(value)
-        isRunning = value
-    end
-})
-
-AutoParryTab:CreateToggle({
-    Name = "Auto Attack After Parry",
-    CurrentValue = false,
-    Callback = function(value)
-        autoAttack = value
-    end
-})
-
-AutoParryTab:CreateToggle({
-    Name = "Auto Spam Parry (When Ball is Very Close)",
-    CurrentValue = false,
-    Callback = function(value)
-        autoSpamParry = value
-    end
-})
-
-AutoParryTab:CreateToggle({
-    Name = "Anti Curve Ball",
-    CurrentValue = false,
-    Callback = function(value)
-        antiCurveBall = value
+        IMMEDIATE_HIGH_VELOCITY_THRESHOLD = value
     end
 })
 
 AutoParryTab:CreateSlider({
-    Name = "Parry Distance",
-    Range = {5, 50},
-    Increment = 1,
-    CurrentValue = sliderValue,
-    Callback = function(value)
-        sliderValue = value
-    end
-})
-
-AutoParryTab:CreateSlider({
-    Name = "Reflex Speed",
+    Name = "Velocity Scaling Fast",
     Range = {0.01, 0.1},
     Increment = 0.01,
-    CurrentValue = BASE_THRESHOLD,
+    CurrentValue = VELOCITY_SCALING_FACTOR_FAST,
     Callback = function(value)
-        BASE_THRESHOLD = value
+        VELOCITY_SCALING_FACTOR_FAST = value
     end
 })
 
-players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
-    character = newCharacter
-end)
+AutoParryTab:CreateSlider({
+    Name = "Velocity Scaling Slow",
+    Range = {0.05, 0.2},
+    Increment = 0.01,
+    CurrentValue = VELOCITY_SCALING_FACTOR_SLOW,
+    Callback = function(value)
+        VELOCITY_SCALING_FACTOR_SLOW = value
+    end
+})
