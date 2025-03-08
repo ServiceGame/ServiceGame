@@ -28,6 +28,22 @@ local AutoParryTab = Window:CreateTab("AutoParry")
 local AutoParrySection = AutoParryTab:CreateSection("Controls")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
 
+-- Hiển thị FPS & PING
+local FPSLabel = AutoParryTab:CreateLabel("FPS: Loading...")
+local PingLabel = AutoParryTab:CreateLabel("PING: Loading...")
+
+task.spawn(function()
+    while true do
+        local fps = math.floor(1 / RunService.RenderStepped:Wait())
+        local ping = math.floor(players.LocalPlayer:GetNetworkPing() * 1000) -- Chuyển thành mili giây
+
+        FPSLabel:Set("FPS: " .. fps)
+        PingLabel:Set("PING: " .. ping .. "ms")
+
+        task.wait(1) -- Cập nhật mỗi giây
+    end
+end)
+
 -- Constants
 local BASE_THRESHOLD = 0.02
 local IMMEDIATE_PARRY_DISTANCE = 7
@@ -85,19 +101,23 @@ RunService.PreSimulation:Connect(function()
 
     if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+            repeat
+                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+                task.wait(0.05)
+                distance = (HRP.Position - ball.Position).Magnitude
+            until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
     if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
-        while distance <= IMMEDIATE_PARRY_DISTANCE do
+        repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.05)
             distance = (HRP.Position - ball.Position).Magnitude
-        end
+        until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if antiCurveBall and velocity > 50 then -- Chặn bóng xoáy bằng cách phản ứng nhanh
+    if antiCurveBall and velocity > 50 then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
