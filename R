@@ -182,36 +182,29 @@ local function updateRolesInfo()
         wait(1)
     end
 end
--- Thêm chức năng ESP Chams
-local function AddChams(player)
-    if player == game.Players.LocalPlayer then return end -- Không hiển thị Chams với người dùng
-    local character = player.Character or player.CharacterAdded:Wait()
-    for _, part in ipairs(character:GetChildren()) do
-        if part:IsA("BasePart") then
-            local highlight = Instance.new("Highlight")
-            highlight.Parent = part
-            highlight.FillColor = Color3.new(1, 0, 0) -- Màu đỏ
-            highlight.FillTransparency = 0.5
-            highlight.OutlineTransparency = 1
-            highlight.Enabled = getgenv().ChamsEnabled
-        end
-    end
-end
+local highlight = Instance.new("Highlight")
 
-for _, player in pairs(game.Players:GetPlayers()) do
-    AddChams(player)
-end
+        game:GetService("RunService").RenderStepped:Connect(
+            function()
+                local camera = game.Workspace.CurrentCamera
+                local localPlayer = game.Players.LocalPlayer  -- Lấy người chơi hiện tại
 
-game.Players.PlayerAdded:Connect(AddChams)
-game.Players.PlayerRemoving:Connect(function(player)
-    if player.Character then
-        for _, part in ipairs(player.Character:GetChildren()) do
-            if part:IsA("Highlight") then
-                part:Destroy()
-            end
-        end
-    end
-end)
+                for _, v in pairs(game.Players:GetPlayers()) do
+                    -- Bỏ qua chính người chơi đang sử dụng script (localPlayer)
+                    if v == localPlayer then
+                        continue
+                    end
+
+                    local character = v.Character
+                    if not character then continue end
+
+                    -- Tạo Highlight nếu chưa có
+                    if not character:FindFirstChild("Highlight") then
+                        highlight.FillTransparency = 1
+                        highlight:Clone().Parent = character
+                        highlight.OutlineColor = _G.ESPColor
+                    end
+
 -- Start updating the Murderer and Sheriff information
 coroutine.wrap(updateRolesInfo)()
 
@@ -300,6 +293,7 @@ local ToggleChams = Tab:CreateToggle({
         end
     end,
 })
+
 local ToggleAllESP = Tab:CreateToggle({
     Name = "Every Player ESP",
     CurrentValue = false,
