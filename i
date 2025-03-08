@@ -1,4 +1,3 @@
-_G.ESP = false
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "ServiceGame - MM2",
@@ -183,28 +182,6 @@ local function updateRolesInfo()
         wait(1)
     end
 end
-
-local highlight = Instance.new("Highlight")
-        game:GetService("RunService").RenderStepped:Connect(
-            function()
-                local camera = game.Workspace.CurrentCamera
-                local localPlayer = game.Players.LocalPlayer  -- Lấy người chơi hiện tại
-
-                for _, v in pairs(game.Players:GetPlayers()) do
-                    -- Bỏ qua chính người chơi đang sử dụng script (localPlayer)
-                    if v == localPlayer then
-                        continue
-                    end
-
-                    local character = v.Character
-                    if not character then continue end
-
-                    -- Tạo Highlight nếu chưa có
-                    if not character:FindFirstChild("Highlight") then
-                        highlight.FillTransparency = 1
-                        highlight:Clone().Parent = character
-                        highlight.OutlineColor = _G.ESPColor
-                    end
 
 -- Start updating the Murderer and Sheriff information
 coroutine.wrap(updateRolesInfo)()
