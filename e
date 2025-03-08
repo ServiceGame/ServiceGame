@@ -55,6 +55,7 @@ VisualTab:CreateToggle({ Name = "Shaders", CurrentValue = false, Callback = func
 local function get_closest_entity()
     local closest, max_distance = nil, math.huge
     for _, entity in pairs(workspace.Alive:GetChildren()) do
+        if entity and entity:FindFirstChild("PrimaryPart") then do
         if entity ~= local_player.Character then
             local distance = (local_player.Character.PrimaryPart.Position - entity.PrimaryPart.Position).Magnitude
             if distance < max_distance then
@@ -68,13 +69,17 @@ end
 -- Xử lý Auto Parry và Auto Hit Ball
 RunService.PreRender:Connect(function()
     if getgenv().aura_Enabled and closest_Entity then
+        if parry_remote and closest_Entity and closest_Entity.PrimaryPart then
         parry_remote:FireServer(0.5, camera.CFrame, { [closest_Entity.Name] = closest_Entity.PrimaryPart.Position }, false)
+    end
     end
     
     if getgenv().auto_HitBall_Enabled then
         for _, ball in pairs(workspace.Balls:GetChildren()) do
             if ball:IsA("BasePart") and (local_player.Character.PrimaryPart.Position - ball.Position).Magnitude < 15 then
-                ReplicatedStorage.Remotes.HitBall:FireServer(ball)
+                if ReplicatedStorage.Remotes:FindFirstChild("HitBall") then
+                    ReplicatedStorage.Remotes.HitBall:FireServer(ball)
+                end
             end
         end
     end
