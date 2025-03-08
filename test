@@ -1,4 +1,3 @@
-
 local version = '0.2'
 
 print('Visual. - https://dsc.gg/52JdnPCzWr')
@@ -36,16 +35,119 @@ local Services = {
     game:GetService('SocialService')
 }
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tevfnn/Visual_Tevfn/main/Visual_Helper"))()
-task.wait(0.5)
+-- Thay đổi thư viện
+local library = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-library:init("Visual 0.2", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
+-- Khởi tạo giao diện mới
+local Window = library:CreateWindow({
+    Name = "Visual 0.2",
+    LoadingTitle = "Loading UI...",
+    LoadingSubtitle = "By ChatGPT",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "VisualConfig",
+        FileName = "settings"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "52JdnPCzWr",
+        RememberJoins = true
+    },
+    KeySystem = false
+})
 
-library:create_section("Combat", 17440545793)
-library:create_section("Misc", 17440868530)
-library:create_section("Visual", 17560376274)
-library:create_section("Server", 17440865331)
-library:create_section("Settings", 17440866925)
+-- Tạo các Tab
+local CombatTab = Window:CreateTab("Combat")
+local MiscTab = Window:CreateTab("Misc")
+local VisualTab = Window:CreateTab("Visual")
+local ServerTab = Window:CreateTab("Server")
+local SettingsTab = Window:CreateTab("Settings")
+
+-- Thêm các Toggle Button
+CombatTab:CreateToggle({
+    Name = "Auto Parry",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().aura_Enabled = toggled
+    end
+})
+
+CombatTab:CreateToggle({
+    Name = "Hit Sound",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().hit_sound_Enabled = toggled
+    end
+})
+
+MiscTab:CreateToggle({
+    Name = "Hit Effect",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().hit_effect_Enabled = toggled
+    end
+})
+
+MiscTab:CreateToggle({
+    Name = "Trail",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().trail_Enabled = toggled
+    end
+})
+
+MiscTab:CreateToggle({
+    Name = "Kill Effect",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().kill_effect_Enabled = toggled
+    end
+})
+
+ServerTab:CreateToggle({
+    Name = "FPS Boost",
+    CurrentValue = false,
+    Callback = function(toggled)
+        if toggled then
+            loadstring(game:HttpGet("https://pastebin.com/raw/uzLqqbec"))()
+        end
+    end
+})
+
+ServerTab:CreateToggle({
+    Name = "Anti-Lag",
+    CurrentValue = false,
+    Callback = function(toggled)
+        if toggled then
+            loadstring(game:HttpGet("https://pastebin.com/raw/qtu4MBV0"))()
+        end
+    end
+})
+
+SettingsTab:CreateButton({
+    Name = "Copy Discord Invite",
+    Callback = function()
+        setclipboard("https://discord.gg/52JdnPCzWr")
+    end
+})
+
+VisualTab:CreateToggle({
+    Name = "Shaders",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().shaders_effect_Enabled = toggled
+    end
+})
+
+VisualTab:CreateToggle({
+    Name = "Show Visualiser",
+    CurrentValue = false,
+    Callback = function(toggled)
+        getgenv().disableVisualizer = not toggled
+        loadstring(game:HttpGet('https://pastebin.com/raw/fAEPN6BC'))()
+    end
+})
+
 
 function initializate(dataFolder_name: string)
     local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
