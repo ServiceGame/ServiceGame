@@ -182,7 +182,36 @@ local function updateRolesInfo()
         wait(1)
     end
 end
+-- Thêm chức năng ESP Chams
+local function AddChams(player)
+    if player == game.Players.LocalPlayer then return end -- Không hiển thị Chams với người dùng
+    local character = player.Character or player.CharacterAdded:Wait()
+    for _, part in ipairs(character:GetChildren()) do
+        if part:IsA("BasePart") then
+            local highlight = Instance.new("Highlight")
+            highlight.Parent = part
+            highlight.FillColor = Color3.new(1, 0, 0) -- Màu đỏ
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 1
+            highlight.Enabled = getgenv().ChamsEnabled
+        end
+    end
+end
 
+for _, player in pairs(game.Players:GetPlayers()) do
+    AddChams(player)
+end
+
+game.Players.PlayerAdded:Connect(AddChams)
+game.Players.PlayerRemoving:Connect(function(player)
+    if player.Character then
+        for _, part in ipairs(player.Character:GetChildren()) do
+            if part:IsA("Highlight") then
+                part:Destroy()
+            end
+        end
+    end
+end)
 -- Start updating the Murderer and Sheriff information
 coroutine.wrap(updateRolesInfo)()
 
@@ -249,36 +278,6 @@ game.Players.PlayerRemoving:Connect(function(player)
     local billboard = ESPFolder:FindFirstChild(player.Name .. "Billboard")
     if billboard then
         billboard:Destroy()
-    end
-end)
--- Thêm chức năng ESP Chams
-local function AddChams(player)
-    if player == game.Players.LocalPlayer then return end -- Không hiển thị Chams với người dùng
-    local character = player.Character or player.CharacterAdded:Wait()
-    for _, part in ipairs(character:GetChildren()) do
-        if part:IsA("BasePart") then
-            local highlight = Instance.new("Highlight")
-            highlight.Parent = part
-            highlight.FillColor = Color3.new(1, 0, 0) -- Màu đỏ
-            highlight.FillTransparency = 0.5
-            highlight.OutlineTransparency = 1
-            highlight.Enabled = getgenv().ChamsEnabled
-        end
-    end
-end
-
-for _, player in pairs(game.Players:GetPlayers()) do
-    AddChams(player)
-end
-
-game.Players.PlayerAdded:Connect(AddChams)
-game.Players.PlayerRemoving:Connect(function(player)
-    if player.Character then
-        for _, part in ipairs(player.Character:GetChildren()) do
-            if part:IsA("Highlight") then
-                part:Destroy()
-            end
-        end
     end
 end)
 
