@@ -157,74 +157,68 @@ function initializate(dataFolder_name: string)
     hit_Sound.Volume = 5
 end
 
-local function get_closest_entity(Object)
-    local closest, max_distance = nil, 30
+-- Auto Parry & Auto Spam Optimization
+
+local function optimized_get_closest_entity()
+    local closest = nil
+    local min_distance = math.huge
     
     for _, entity in ipairs(workspace.Alive:GetChildren()) do
-        if entity ~= Players.LocalPlayer and entity:FindFirstChild("HumanoidRootPart") then
-            local distance = (Object.Position - entity.HumanoidRootPart.Position).Magnitude
-            if distance < max_distance then
-                closest, max_distance = entity, distance
+        if entity.Name ~= Players.LocalPlayer.Name then
+            local distance = (Players.LocalPlayer.Character.PrimaryPart.Position - entity.HumanoidRootPart.Position).Magnitude
+            if distance < min_distance then
+                closest = entity
+                min_distance = distance
             end
         end
     end
     return closest
 end
 
-function resolve_parry_Remote()
-    for _, service in pairs({game:GetService('AdService'), game:GetService('SocialService')}) do
-        local temp_remote = service:FindFirstChildOfClass('RemoteEvent')
-        if temp_remote and temp_remote.Name:find('\n') then
-            parry_remote = temp_remote
-            break
+local function optimized_auto_parry()
+    RunService.Heartbeat:Connect(function()
+        if not getgenv().aura_Enabled then return end
+        
+        local self = Nurysium_Util.getBall()
+        if not self then return end
+        
+        local ball_distance = Players.LocalPlayer:DistanceFromCharacter(self.Position)
+        local ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
+        
+        local parry_range = math.max(ping + 4, 9.5) + self.AssemblyLinearVelocity.Magnitude / 3.5
+        
+        if ball_distance <= parry_range and not aura_table.is_Spamming then
+            parry_remote:FireServer(
+                0.5,
+                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-500, 500), math.random(0, 500), math.random(-500, 500))),
+                {[closest_Entity.Name] = closest_Entity.HumanoidRootPart.Position},
+                {closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y},
+                false
+            )
         end
-    end
+    end)
 end
 
-local aura_table = {
-    canParry = true,
-    hit_Count = 0,
-    hit_Time = tick()
-}
-
-RunService.RenderStepped:Connect(function()
-    if not getgenv().aura_Enabled then return end
-    
-    local ping = math.max(Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10, 5)
-    local ball = Nurysium_Util.getBall()
-    
-    if not ball or ball:GetAttribute('target') ~= local_player.Name or not aura_table.canParry then return end
-    
-    closest_Entity = get_closest_entity(local_player.Character.PrimaryPart)
-    if not closest_Entity then return end
-    
-    local ball_Distance = local_player:DistanceFromCharacter(ball.Position)
-    local parry_Range = math.max(math.max(ping, 4) + ball.AssemblyLinearVelocity.Magnitude / 3.5, 9.5)
-    
-    if ball_Distance <= parry_Range and aura_table.hit_Count < 3 then
-        parry_remote:FireServer(0.5, camera.CFrame, {[closest_Entity.Name] = closest_Entity.HumanoidRootPart.Position}, {closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y}, false)
-        aura_table.canParry = false
-        aura_table.hit_Time = tick()
-        aura_table.hit_Count = aura_table.hit_Count + 1
+local function optimized_auto_spam()
+    RunService.Heartbeat:Connect(function()
+        if not getgenv().aura_Enabled then return end
         
-        task.delay(0.15, function()
-            aura_table.hit_Count = aura_table.hit_Count - 1
-        end)
-    end
-    
-    if (tick() - aura_table.hit_Time) >= 1 then
-        aura_table.canParry = true
-    end
-end)
+        local closest = optimized_get_closest_entity()
+        if closest and Players.LocalPlayer:DistanceFromCharacter(closest.HumanoidRootPart.Position) <= aura_table.spam_Range then
+            parry_remote:FireServer(
+                0.5,
+                CFrame.new(camera.CFrame.Position, Vector3.zero),
+                {[closest.Name] = closest.HumanoidRootPart.Position},
+                {closest.HumanoidRootPart.Position.X, closest.HumanoidRootPart.Position.Y},
+                false
+            )
+        end
+    end)
+end
 
-resolve_parry_Remote()
-
-
-workspace:WaitForChild("Balls").ChildRemoved:Connect(function(child)
-    aura_table.hit_Count = 0
-    aura_table.is_ball_Warping = false
-    aura_table.is_Spamming = false
-end)
+-- Initialize optimized auto parry and auto spam
+optimized_auto_parry()
+optimized_auto_spam()
 
 library:create_toggle("Auto Parry", "Combat", function(toggled)
     resolve_parry_Remote()
