@@ -1,15 +1,12 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-   Name = "Murder Mystery 2 OP",
-   LoadingTitle = "Made by freScript on scriptblox",
-   LoadingSubtitle = "by frescript",
+   Name = "ServiceGame - MM2",
+   LoadingTitle = "Made by Wibu",
+   LoadingSubtitle = "by Wibu",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = MurderMysteryFre, -- Create a custom folder for your hub/game
-      FileName = "FreScriptsScriptblox"
+      FileName = "ServiceGame"
    }
 })
 
