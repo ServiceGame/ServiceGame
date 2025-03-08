@@ -54,7 +54,9 @@ VisualTab:CreateToggle({ Name = "Shaders", CurrentValue = false, Callback = func
 -- Hàm xác định thực thể gần nhất
 local function get_closest_entity()
     local closest, max_distance = nil, math.huge
+    local closest, max_distance = nil, math.huge
     for _, entity in pairs(workspace.Alive:GetChildren()) do
+        if entity and entity:FindFirstChild("PrimaryPart") then
         if entity and entity:FindFirstChild("PrimaryPart") then do
         if entity ~= local_player.Character then
             local distance = (local_player.Character.PrimaryPart.Position - entity.PrimaryPart.Position).Magnitude
@@ -63,7 +65,10 @@ local function get_closest_entity()
             end
         end
     end
+            end
+    end
     return closest
+end
 end
 
 -- Xử lý Auto Parry và Auto Hit Ball
