@@ -1,4 +1,4 @@
--- Tối ưu AutoParry với Remote Events và tốc độ phản xạ nhanh hơn
+-- Tối ưu AutoParry với tốc độ phản xạ nhanh hơn và UI hiển thị FPS/PING
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -13,9 +13,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:FindFirstChild("Balls")
-local remotes = replicatedStorage:FindFirstChild("Remotes")
-local parryButtonPress = remotes and remotes:FindFirstChild("ParryButtonPress")
-local attackButtonPress = remotes and remotes:FindFirstChild("AttackButtonPress")
+local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
@@ -37,17 +35,17 @@ local PingLabel = AutoParryTab:CreateLabel("PING: Loading...")
 task.spawn(function()
     while true do
         local fps = math.floor(1 / RunService.RenderStepped:Wait())
-        local ping = math.floor(players.LocalPlayer:GetNetworkPing() * 1000)
+        local ping = math.floor(players.LocalPlayer:GetNetworkPing() * 1000) -- Chuyển thành mili giây
 
         FPSLabel:Set("FPS: " .. fps)
         PingLabel:Set("PING: " .. ping .. "ms")
 
-        task.wait(1)
+        task.wait(1) -- Cập nhật mỗi giây
     end
 end)
 
 -- Constants
-local BASE_THRESHOLD = 0.015
+local BASE_THRESHOLD = 0.015 -- Tăng tốc phản xạ
 local IMMEDIATE_PARRY_DISTANCE = 7
 local sliderValue = 15
 local isRunning = false
@@ -70,58 +68,67 @@ local function getClosestBall()
     return bestBall
 end
 
+local function isBallOnScreen(ball)
+    local _, onScreen = Camera:WorldToViewportPoint(ball.Position)
+    return onScreen
+end
+
 local function isBallDangerous(ball)
     if not character or not character.PrimaryPart or not ball then return false end
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(30)
+    return angle < math.rad(30) and isBallOnScreen(ball)
 end
 
-RunService.Heartbeat:Connect(function()
-    if not isRunning and not autoSpamParry and not antiCurveBall then return end
+local function timeUntilImpact(ball)
+    if not character or not character.PrimaryPart or not ball then return math.huge end
+    local direction = (character.PrimaryPart.Position - ball.Position).Unit
+    local relativeVelocity = ball.Velocity:Dot(direction)
+    local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
+    return relativeVelocity > 0 and (distance - sliderValue) / relativeVelocity or math.huge
+end
+
+RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc độ phản hồi
     if not isRunning or not character or not character.PrimaryPart then return end
 
     local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
     if not ball or not HRP then return end
 
     local distance = (HRP.Position - ball.Position).Magnitude
-    local timeToImpact = (distance - sliderValue) / ball.Velocity.Magnitude
+    local timeToImpact = timeUntilImpact(ball)
+    local velocity = ball.Velocity.Magnitude
 
-    if (ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball)) and (distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD) then
-        repeat
-            if parryButtonPress then
+    if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
+        if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
+            repeat
+                if parryButtonPress then
                 parryButtonPress:FireServer()
             else
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             end
-            task.wait(0.02)
-            distance = (HRP.Position - ball.Position).Magnitude
-        until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
+                task.wait(0.02) -- Giảm thời gian chờ để parry nhanh hơn
+                distance = (HRP.Position - ball.Position).Magnitude
+            until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
+        end
     end
     
-    if isRunning and autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
-            if parryButtonPress then
-                parryButtonPress:FireServer()
-            else
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            end
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.02)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if isRunning and antiCurveBall and ball.Velocity.Magnitude > 50 then
-        if parryButtonPress then
-            parryButtonPress:FireServer()
-        else
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        end
+    if antiCurveBall and velocity > 50 then
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
-    if autoAttack and distance <= sliderValue and attackButtonPress then
-        attackButtonPress:FireServer()
+    if autoAttack and distance <= sliderValue then
+        pcall(function()
+            attackButtonPress:Fire()
+        end)
     end
 end)
 
@@ -155,6 +162,26 @@ AutoParryTab:CreateToggle({
     CurrentValue = false,
     Callback = function(value)
         antiCurveBall = value
+    end
+})
+
+AutoParryTab:CreateSlider({
+    Name = "Parry Distance",
+    Range = {5, 50},
+    Increment = 1,
+    CurrentValue = sliderValue,
+    Callback = function(value)
+        sliderValue = value
+    end
+})
+
+AutoParryTab:CreateSlider({
+    Name = "Reflex Speed",
+    Range = {0.01, 0.1},
+    Increment = 0.01,
+    CurrentValue = BASE_THRESHOLD,
+    Callback = function(value)
+        BASE_THRESHOLD = value
     end
 })
 
