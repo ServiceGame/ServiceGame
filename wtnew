@@ -74,7 +74,7 @@ end
 local SilentAimSettings = {
     Enabled = false,
     
-    ClassName = "PasteWare  |  github.com/FakeAngles",
+    ClassName = "ServiceGame - [ TOP 1 ] War Tycoon",
     ToggleKey = "U",
     
     TeamCheck = false,
