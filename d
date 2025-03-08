@@ -1,3 +1,4 @@
+_G.ESP = false
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "ServiceGame - MM2",
@@ -184,7 +185,6 @@ local function updateRolesInfo()
 end
 
 local highlight = Instance.new("Highlight")
-
         game:GetService("RunService").RenderStepped:Connect(
             function()
                 local camera = game.Workspace.CurrentCamera
@@ -210,6 +210,7 @@ local highlight = Instance.new("Highlight")
 coroutine.wrap(updateRolesInfo)()
 
 local ESPFolder = Instance.new("Folder")
+local highlight = Instance.new("Highlight")
 ESPFolder.Name = "ESP Holder"
 ESPFolder.Parent = game.CoreGui
 
