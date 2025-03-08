@@ -1,4 +1,4 @@
--- Tối ưu AutoParry với tốc độ phản xạ nhanh hơn và UI hiển thị FPS/PING
+-- Tối ưu AutoParry với UI mới và phản xạ nhanh khi bóng ở cực gần
 local workspace = game:GetService("Workspace")
 local players = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -45,7 +45,7 @@ task.spawn(function()
 end)
 
 -- Constants
-local BASE_THRESHOLD = 0.015 -- Tăng tốc phản xạ
+local BASE_THRESHOLD = 0.02
 local IMMEDIATE_PARRY_DISTANCE = 7
 local sliderValue = 15
 local isRunning = false
@@ -69,7 +69,7 @@ local function getClosestBall()
 end
 
 local function isBallOnScreen(ball)
-    local _, onScreen = Camera:WorldToViewportPoint(ball.Position)
+    local screenPosition, onScreen = Camera:WorldToViewportPoint(ball.Position)
     return onScreen
 end
 
@@ -78,7 +78,7 @@ local function isBallDangerous(ball)
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(30) and isBallOnScreen(ball)
+    return angle < math.rad(30) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
 end
 
 local function timeUntilImpact(ball)
@@ -89,7 +89,7 @@ local function timeUntilImpact(ball)
     return relativeVelocity > 0 and (distance - sliderValue) / relativeVelocity or math.huge
 end
 
-RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc độ phản hồi
+RunService.PreSimulation:Connect(function()
     if not isRunning or not character or not character.PrimaryPart then return end
 
     local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
@@ -102,12 +102,8 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
-                if parryButtonPress then
-                parryButtonPress:FireServer()
-            else
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            end
-                task.wait(0.02) -- Giảm thời gian chờ để parry nhanh hơn
+                task.wait(0.05)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
@@ -116,7 +112,7 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            task.wait(0.02)
+            task.wait(0.05)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
