@@ -320,7 +320,7 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/F
 Library.KeybindFrame.Visible = true;
 
 local Window = Library:CreateWindow({
-    Title = 'PasteWare  |  github.com/FakeAngles',
+    Title = 'ServiceGame - [ TOP 1 ] War Tycoon',
     Center = true,
     AutoShow = true,  
     TabPadding = 8,
