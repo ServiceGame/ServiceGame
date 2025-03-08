@@ -83,7 +83,6 @@ local Button = Tab:CreateButton({
         end
     end,
 })
-
 local Section = Tab:CreateSection("role op")
 
 local Button = Tab:CreateButton({
@@ -252,7 +251,56 @@ game.Players.PlayerRemoving:Connect(function(player)
         billboard:Destroy()
     end
 end)
+-- Thêm chức năng ESP Chams
+local function AddChams(player)
+    if player == game.Players.LocalPlayer then return end -- Không hiển thị Chams với người dùng
+    local character = player.Character or player.CharacterAdded:Wait()
+    for _, part in ipairs(character:GetChildren()) do
+        if part:IsA("BasePart") then
+            local highlight = Instance.new("Highlight")
+            highlight.Parent = part
+            highlight.FillColor = Color3.new(1, 0, 0) -- Màu đỏ
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 1
+            highlight.Enabled = getgenv().ChamsEnabled
+        end
+    end
+end
 
+for _, player in pairs(game.Players:GetPlayers()) do
+    AddChams(player)
+end
+
+game.Players.PlayerAdded:Connect(AddChams)
+game.Players.PlayerRemoving:Connect(function(player)
+    if player.Character then
+        for _, part in ipairs(player.Character:GetChildren()) do
+            if part:IsA("Highlight") then
+                part:Destroy()
+            end
+        end
+    end
+end)
+
+local ToggleChams = Tab:CreateToggle({
+    Name = "Chams",
+    CurrentValue = false,
+    Flag = "ChamsESP",
+    Callback = function(state)
+        getgenv().ChamsEnabled = state
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+                if player.Character then
+                    for _, part in ipairs(player.Character:GetChildren()) do
+                        if part:IsA("Highlight") then
+                            part.Enabled = state
+                        end
+                    end
+                end
+            end
+        end
+    end,
+})
 local ToggleAllESP = Tab:CreateToggle({
     Name = "Every Player ESP",
     CurrentValue = false,
