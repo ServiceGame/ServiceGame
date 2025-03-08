@@ -7,26 +7,12 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 
 -- Kiểm tra và tải Rayfield UI
-local Rayfield
-local success, err = pcall(function()
-    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source', true))()
-end)
-
-if not success or not Rayfield then
-    warn("Failed to load Rayfield UI: " .. (err or "Unknown error"))
-    return
-end
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:FindFirstChild("Balls")
 local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
-local attackButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("AttackButtonPress")
-
-if not ballsFolder or not parryButtonPress or not attackButtonPress then
-    warn("Missing essential game elements. Script will not run.")
-    return
-end
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
