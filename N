@@ -28,12 +28,13 @@ local AutoParrySection = AutoParryTab:CreateSection("Controls")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
 
 -- Constants
-local BASE_THRESHOLD = 0.03
-local IMMEDIATE_PARRY_DISTANCE = 8
+local BASE_THRESHOLD = 0.02
+local IMMEDIATE_PARRY_DISTANCE = 7
 local sliderValue = 15
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
+local antiCurveBall = false
 
 local function getClosestBall()
     if not character or not character.PrimaryPart then return nil end
@@ -66,10 +67,10 @@ RunService.PreSimulation:Connect(function()
 
     local distance = (HRP.Position - ball.Position).Magnitude
     local timeToImpact = timeUntilImpact(ball)
+    local velocity = ball.Velocity.Magnitude
 
     if ball:GetAttribute("target") == localPlayer.Name and (distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD) then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        Rayfield:Notify({Title = "AutoParry", Content = "Parried Successfully!", Duration = 0.5})
     end
     
     if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
@@ -78,6 +79,10 @@ RunService.PreSimulation:Connect(function()
             task.wait(0.05)
             distance = (HRP.Position - ball.Position).Magnitude
         end
+    end
+    
+    if antiCurveBall and velocity > 50 then -- Chặn bóng xoáy bằng cách phản ứng nhanh
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
     if autoAttack and distance <= sliderValue then
@@ -109,6 +114,14 @@ AutoParryTab:CreateToggle({
     CurrentValue = false,
     Callback = function(value)
         autoSpamParry = value
+    end
+})
+
+AutoParryTab:CreateToggle({
+    Name = "Anti Curve Ball",
+    CurrentValue = false,
+    Callback = function(value)
+        antiCurveBall = value
     end
 })
 
