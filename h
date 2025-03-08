@@ -32,8 +32,8 @@ local BASE_THRESHOLD = 0.03
 local IMMEDIATE_PARRY_DISTANCE = 8
 local sliderValue = 15
 local isRunning = false
-local isParried = false
 local autoAttack = false
+local autoSpamParry = false
 
 local function getClosestBall()
     if not character or not character.PrimaryPart then return nil end
@@ -48,13 +48,6 @@ local function getClosestBall()
         end
     end
     return bestBall
-end
-
-local function resetParry()
-    isParried = false
-end
-if ballsFolder then
-    ballsFolder.ChildAdded:Connect(resetParry)
 end
 
 local function timeUntilImpact(ball)
@@ -74,12 +67,19 @@ RunService.PreSimulation:Connect(function()
     local distance = (HRP.Position - ball.Position).Magnitude
     local timeToImpact = timeUntilImpact(ball)
 
-    if ball:GetAttribute("target") == localPlayer.Name and not isParried and (distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD) then
+    if ball:GetAttribute("target") == localPlayer.Name and (distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD) then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        isParried = true
         Rayfield:Notify({Title = "AutoParry", Content = "Parried Successfully!", Duration = 0.5})
     end
-
+    
+    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+        while distance <= IMMEDIATE_PARRY_DISTANCE do
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+            task.wait(0.05)
+            distance = (HRP.Position - ball.Position).Magnitude
+        end
+    end
+    
     if autoAttack and distance <= sliderValue then
         pcall(function()
             attackButtonPress:Fire()
@@ -93,7 +93,6 @@ AutoParryTab:CreateToggle({
     CurrentValue = false,
     Callback = function(value)
         isRunning = value
-        Rayfield:Notify({Title = "AutoParry", Content = value and "Enabled" or "Disabled", Duration = 1})
     end
 })
 
@@ -102,7 +101,14 @@ AutoParryTab:CreateToggle({
     CurrentValue = false,
     Callback = function(value)
         autoAttack = value
-        Rayfield:Notify({Title = "Settings", Content = value and "Auto Attack Enabled" or "Auto Attack Disabled", Duration = 1})
+    end
+})
+
+AutoParryTab:CreateToggle({
+    Name = "Auto Spam Parry (When Ball is Very Close)",
+    CurrentValue = false,
+    Callback = function(value)
+        autoSpamParry = value
     end
 })
 
@@ -113,7 +119,6 @@ AutoParryTab:CreateSlider({
     CurrentValue = sliderValue,
     Callback = function(value)
         sliderValue = value
-        Rayfield:Notify({Title = "Settings", Content = "Parry Distance: " .. value, Duration = 1})
     end
 })
 
@@ -124,11 +129,9 @@ AutoParryTab:CreateSlider({
     CurrentValue = BASE_THRESHOLD,
     Callback = function(value)
         BASE_THRESHOLD = value
-        Rayfield:Notify({Title = "Settings", Content = "Reflex Speed: " .. value, Duration = 1})
     end
 })
 
 players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     character = newCharacter
-    resetParry()
 end)
