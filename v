@@ -6,11 +6,14 @@ local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 
-local success, Rayfield = pcall(function()
-    return loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- Kiểm tra và tải Rayfield UI
+local Rayfield
+local success, err = pcall(function()
+    Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source', true))()
 end)
-if not success then
-    warn("Failed to load Rayfield UI")
+
+if not success or not Rayfield then
+    warn("Failed to load Rayfield UI: " .. (err or "Unknown error"))
     return
 end
 
