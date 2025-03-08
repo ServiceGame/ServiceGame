@@ -6,13 +6,24 @@ local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local success, Rayfield = pcall(function()
+    return loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+end)
+if not success then
+    warn("Failed to load Rayfield UI")
+    return
+end
 
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
-local ballsFolder = workspace:WaitForChild("Balls")
-local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
-local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
+local ballsFolder = workspace:FindFirstChild("Balls")
+local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
+local attackButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("AttackButtonPress")
+
+if not ballsFolder or not parryButtonPress or not attackButtonPress then
+    warn("Missing essential game elements. Script will not run.")
+    return
+end
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
@@ -28,14 +39,15 @@ local AutoParrySection = AutoParryTab:CreateSection("Controls")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
 
 -- Constants
-local BASE_THRESHOLD = 0.03 -- Giảm thời gian phản xạ để tối ưu hơn
-local IMMEDIATE_PARRY_DISTANCE = 8 -- Phản xạ ngay khi bóng gần hơn
+local BASE_THRESHOLD = 0.03
+local IMMEDIATE_PARRY_DISTANCE = 8
 local sliderValue = 15
 local isRunning = false
 local isParried = false
 local autoAttack = false
 
 local function getClosestBall()
+    if not character or not character.PrimaryPart then return nil end
     local minDistance, bestBall = math.huge, nil
     for _, ball in ipairs(ballsFolder:GetChildren()) do
         if ball:GetAttribute("realBall") then
@@ -52,10 +64,12 @@ end
 local function resetParry()
     isParried = false
 end
-workspace.Balls.ChildAdded:Connect(resetParry)
+if ballsFolder then
+    ballsFolder.ChildAdded:Connect(resetParry)
+end
 
 local function timeUntilImpact(ball)
-    if not character or not ball then return math.huge end
+    if not character or not character.PrimaryPart or not ball then return math.huge end
     local direction = (character.PrimaryPart.Position - ball.Position).Unit
     local relativeVelocity = ball.Velocity:Dot(direction)
     local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
@@ -63,30 +77,29 @@ local function timeUntilImpact(ball)
 end
 
 RunService.PreSimulation:Connect(function()
-    if not isRunning then return end
+    if not isRunning or not character or not character.PrimaryPart then return end
 
-    local ball, HRP = getClosestBall(), localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
     if not ball or not HRP then return end
 
-    local speed = ball.Velocity.Magnitude
     local distance = (HRP.Position - ball.Position).Magnitude
     local timeToImpact = timeUntilImpact(ball)
 
-    -- Nếu bóng cực gần hoặc di chuyển rất nhanh, phản xạ ngay lập tức
     if ball:GetAttribute("target") == localPlayer.Name and not isParried and (distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD) then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
         isParried = true
         Rayfield:Notify({Title = "AutoParry", Content = "Parried Successfully!", Duration = 0.5})
     end
 
-    -- Tự động tấn công nếu được bật
     if autoAttack and distance <= sliderValue then
-        attackButtonPress:Fire()
+        pcall(function()
+            attackButtonPress:Fire()
+        end)
     end
 end)
 
 -- UI Controls
-local AutoParryToggle = AutoParryTab:CreateToggle({
+AutoParryTab:CreateToggle({
     Name = "Enable AutoParry",
     CurrentValue = false,
     Callback = function(value)
@@ -95,7 +108,7 @@ local AutoParryToggle = AutoParryTab:CreateToggle({
     end
 })
 
-local AutoAttackToggle = AutoParryTab:CreateToggle({
+AutoParryTab:CreateToggle({
     Name = "Auto Attack After Parry",
     CurrentValue = false,
     Callback = function(value)
@@ -104,7 +117,7 @@ local AutoAttackToggle = AutoParryTab:CreateToggle({
     end
 })
 
-local DistanceSlider = AutoParryTab:CreateSlider({
+AutoParryTab:CreateSlider({
     Name = "Parry Distance",
     Range = {5, 50},
     Increment = 1,
@@ -115,7 +128,7 @@ local DistanceSlider = AutoParryTab:CreateSlider({
     end
 })
 
-local ReflexSpeedSlider = AutoParryTab:CreateSlider({
+AutoParryTab:CreateSlider({
     Name = "Reflex Speed",
     Range = {0.01, 0.1},
     Increment = 0.01,
@@ -126,8 +139,7 @@ local ReflexSpeedSlider = AutoParryTab:CreateSlider({
     end
 })
 
-local playersService = game:GetService("Players")
-playersService.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
     character = newCharacter
     resetParry()
 end)
