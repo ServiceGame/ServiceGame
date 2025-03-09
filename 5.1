@@ -50,10 +50,22 @@ local sliderValue = 20
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
-local autoSpamKeybind = Enum.KeyCode.X -- Phím tắt bật/tắt Auto Spam Parry
 local antiCurveBall = false
 
 local function getClosestBall()
+    if not character or not character.PrimaryPart then return nil end
+    local minDistance, bestBall = math.huge, nil
+    for _, ball in ipairs(ballsFolder:GetChildren()) do
+        if ball:GetAttribute("realBall") then
+            ball.Size = Vector3.new(10, 10, 10) -- Tăng hitbox bóng để đánh xa hơn
+            local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                bestBall = ball
+            end
+        end
+    end
+    return bestBall
     if not character or not character.PrimaryPart then return nil end
     local minDistance, bestBall = math.huge, nil
     for _, ball in ipairs(ballsFolder:GetChildren()) do
@@ -137,19 +149,14 @@ AutoParryTab:CreateToggle({
     end
 })
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == autoSpamKeybind then
-        autoSpamParry = true
-        Rayfield:Notify({Title = "Auto Spam Parry", Content = "Enabled", Duration = 1})
+AutoParryTab:CreateToggle({
+    Name = "Auto Spam Parry (When Ball is Very Close)",
+    CurrentValue = false,
+    Callback = function(value)
+        autoSpamParry = value
     end
-end)
+})
 
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == autoSpamKeybind then
-        autoSpamParry = false
-        Rayfield:Notify({Title = "Auto Spam Parry", Content = "Disabled", Duration = 1})
-    end
-  
 AutoParryTab:CreateToggle({
     Name = "Anti Curve Ball",
     CurrentValue = false,
