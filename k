@@ -51,7 +51,6 @@ local sliderValue = 15
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
-local blatantAutoSpamParry = false -- Chế độ spam parry mạnh
 local autoSpamParryKeybind = Enum.KeyCode.X -- Phím tắt để bật/tắt Auto Spam Parry
 local antiCurveBall = false
 
@@ -105,13 +104,13 @@ RunService.PreSimulation:Connect(function()
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(blatantAutoSpamParry and 0.01 or 0.03)
+                task.wait(0.05)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
-    if (autoSpamParry or blatantAutoSpamParry) and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.05)
@@ -140,10 +139,6 @@ AutoParryTab:CreateToggle({
 })
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.B then
-        blatantAutoSpamParry = not blatantAutoSpamParry
-        Rayfield:Notify({Title = "Blatant Auto Spam Parry", Content = blatantAutoSpamParry and "Enabled" or "Disabled", Duration = 1})
-    end
     if not gameProcessed and input.KeyCode == autoSpamParryKeybind then
         autoSpamParry = not autoSpamParry
     end
