@@ -5,7 +5,8 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
-local Camera = workspace.CurrentCamera
+local heartbeatConnection
+local localPlayer = players.LocalPlayer
 
 -- Kiểm tra và tải Rayfield UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -13,19 +14,18 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:FindFirstChild("Balls")
-local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
+local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
-    Name = "AutoParry System",
-    LoadingTitle = "Blade Ball AutoParry",
-    LoadingSubtitle = "Optimized by Dev",
+    Name = "ServiceGame",
+    LoadingTitle = "Blade Ball Simple",
+    LoadingSubtitle = "by Wibu",
     ConfigurationSaving = {Enabled = false},
     KeySystem = false
 })
 
 local AutoParryTab = Window:CreateTab("AutoParry")
-local AutoParrySection = AutoParryTab:CreateSection("Controls")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
 
 -- Hiển thị FPS & PING
@@ -46,12 +46,11 @@ end)
 
 -- Constants
 local BASE_THRESHOLD = 0.02
-local IMMEDIATE_PARRY_DISTANCE = 7
-local sliderValue = 15
+local IMMEDIATE_PARRY_DISTANCE = 15
+local sliderValue = 20
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
-local autoSpamParryKeybind = Enum.KeyCode.X -- Phím tắt để bật/tắt Auto Spam Parry
 local antiCurveBall = false
 
 local function getClosestBall()
@@ -79,7 +78,7 @@ local function isBallDangerous(ball)
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(15) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
+    return angle < math.rad(0.20) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
 end
 
 local function timeUntilImpact(ball)
@@ -91,6 +90,7 @@ local function timeUntilImpact(ball)
 end
 
 RunService.PreSimulation:Connect(function()
+    if not isRunning and not autoSpamParry and not antiCurveBall then return end
     if not isRunning or not character or not character.PrimaryPart then return end
 
     local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
@@ -100,25 +100,25 @@ RunService.PreSimulation:Connect(function()
     local timeToImpact = timeUntilImpact(ball)
     local velocity = ball.Velocity.Magnitude
 
-    if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
+    if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(realball) then
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.05)
+                task.wait(0.01)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if isRunning and autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            task.wait(0.05)
+            task.wait(0.01)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if antiCurveBall and velocity > 50 then
+    if isRunning and antiCurveBall and velocity > 50 then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
@@ -138,11 +138,13 @@ AutoParryTab:CreateToggle({
     end
 })
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == autoSpamParryKeybind then
-        autoSpamParry = not autoSpamParry
+AutoParryTab:CreateToggle({
+    Name = "Auto Spam Parry (When Ball is Very Close)",
+    CurrentValue = false,
+    Callback = function(value)
+        autoSpamParry = value
     end
-end)
+})
 
 AutoParryTab:CreateToggle({
     Name = "Anti Curve Ball",
