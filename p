@@ -13,9 +13,9 @@ local HttpService = game:GetService("HttpService")
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:WaitForChild("Balls")
-local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
-local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
-local abilityButtonPress = replicatedStorage.Remotes.AbilityButtonPress
+local parryButtonPress = replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
+local attackButtonPress = replicatedStorage.Remotes:FindFirstChild("AttackButtonPress")
+local abilityButtonPress = replicatedStorage.Remotes:FindFirstChild("AbilityButtonPress")
 
 -- Config File Path
 local configFilePath = "SGConfig.json"
@@ -112,8 +112,10 @@ end
 -- Auto Ability Activation
 local function useAbilityIfNeeded(distance, ball)
     if autoAbility and distance <= ABILITY_TRIGGER_DISTANCE then
-        abilityButtonPress:Fire()
-        Rayfield:Notify("Used Ability to Defend!")
+        if abilityButtonPress then
+            abilityButtonPress:Fire()
+            Rayfield:Notify("Used Ability to Defend!")
+        end
     end
 end
 
@@ -127,17 +129,17 @@ RunService.Heartbeat:Connect(function()
     
     useAbilityIfNeeded(distance, ball)
     
-    if distance <= IMMEDIATE_PARRY_DISTANCE then
+    if distance <= IMMEDIATE_PARRY_DISTANCE and parryButtonPress then
         if parryMode == "Legit" then
             task.wait(0.15)
         elseif parryMode == "High Ping" then
             task.wait(HIGH_PING_PARRY_DELAY)
         end
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        parryButtonPress:Fire()
         Rayfield:Notify("Parry!")
     end
     
-    if autoAttack and distance <= AUTO_ATTACK_THRESHOLD then
+    if autoAttack and distance <= AUTO_ATTACK_THRESHOLD and attackButtonPress then
         attackButtonPress:Fire()
     end
 end)
