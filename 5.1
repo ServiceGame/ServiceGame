@@ -74,7 +74,7 @@ local function isBallDangerous(ball)
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(60) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
+    return angle < math.rad(30) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
 end
 
 local function timeUntilImpact(ball)
@@ -109,7 +109,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            task.wait(0.03)
+            task.wait(0.01)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
