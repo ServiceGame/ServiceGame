@@ -46,7 +46,7 @@ end)
 
 -- Constants
 local BASE_THRESHOLD = 0.008
-local IMMEDIATE_PARRY_DISTANCE = 7
+local IMMEDIATE_PARRY_DISTANCE = math.clamp(velocity / 4, 7, 25)
 local sliderValue = 15
 local isRunning = false
 local autoAttack = false
@@ -68,10 +68,6 @@ local function getClosestBall()
     return bestBall
 end
 
-local function isBallOnScreen(ball)
-    local screenPosition, onScreen = Camera:WorldToViewportPoint(ball.Position)
-    return onScreen
-end
 
 local function isBallDangerous(ball)
     if not character or not character.PrimaryPart or not ball then return false end
@@ -90,6 +86,7 @@ local function timeUntilImpact(ball)
 end
 
 local heartbeatConnection = RunService.Heartbeat:Connect(function()
+    if not isRunning and not autoSpamParry and not antiCurveBall and not autoAttack then return end
     if not isRunning or not character or not character.PrimaryPart then return end
 
     local ball, HRP = getClosestBall(), character:FindFirstChild("HumanoidRootPart")
@@ -100,19 +97,23 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     local velocity = ball.Velocity.Magnitude
 
     if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
-        if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
+        if (distance <= 10 and ball:GetAttribute("target") == localPlayer.Name) or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
                 task.wait(0.02)
                 distance = (HRP.Position - ball.Position).Magnitude
-            until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
+            until distance > 10 or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and distance <= 10 then
         repeat
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            task.wait(0.05)
+            if parryButtonPress then
+                parryButtonPress:FireServer()
+            else
+                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+            end
+            task.wait(0.02)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
@@ -121,7 +122,10 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
-    if autoAttack and distance <= sliderValue then
+    if autoAttack and distance <= 10 then
+        if attackButtonPress then
+            attackButtonPress:FireServer()
+        end
         pcall(function()
             attackButtonPress:Fire()
         end)
@@ -134,14 +138,6 @@ AutoParryTab:CreateToggle({
     CurrentValue = false,
     Callback = function(value)
         isRunning = value
-    end
-})
-
-AutoParryTab:CreateToggle({
-    Name = "Auto Attack After Parry",
-    CurrentValue = false,
-    Callback = function(value)
-        autoAttack = value
     end
 })
 
