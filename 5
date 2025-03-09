@@ -17,7 +17,6 @@ local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replica
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
-    VisualTab = Window:CreateTab("Visual") -- Thêm Tab Visual
     Name = "AutoParry System",
     LoadingTitle = "Blade Ball AutoParry",
     LoadingSubtitle = "Optimized by Dev",
@@ -46,8 +45,8 @@ task.spawn(function()
 end)
 
 -- Constants
-local BASE_THRESHOLD = 0.2
-local IMMEDIATE_PARRY_DISTANCE = 15
+local BASE_THRESHOLD = 0.008
+local IMMEDIATE_PARRY_DISTANCE = math.clamp(velocity / 4, 7, 25)
 local sliderValue = 20
 local isRunning = false
 local autoAttack = false
@@ -97,17 +96,17 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     local timeToImpact = timeUntilImpact(ball)
     local velocity = ball.Velocity.Magnitude
 
-    if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
+    if ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) then
         if (distance <= 10 and ball:GetAttribute("target") == localPlayer.Name) or timeToImpact <= BASE_THRESHOLD then
             repeat
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.02)
+                UserInputService.InputBegan:Fire({KeyCode = Enum.KeyCode.F}, false)
+                task.wait(0.005)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.02)
@@ -115,7 +114,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if antiCurveBall and ball:GetAttribute("target") == localPlayer.Name and velocity > 50 then
+    if antiCurveBall and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and velocity > 50 then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
@@ -125,18 +124,6 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         end)
     end
 end)
-
--- ESP Ball và Khoảng cách Ball đến người chơi
-local function updateESP()
-    for _, ball in ipairs(ballsFolder:GetChildren()) do
-        if ball:IsA("Part") and ball:GetAttribute("realBall") then
-            local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
-            ball.BrickColor = BrickColor.new("Really red") -- Đổi màu bóng khi nó là mục tiêu
-            Rayfield:Notify({Title = "Ball Distance", Content = "Ball is " .. math.floor(distance) .. "m away", Duration = 1})
-        end
-    end
-end
-RunService.Heartbeat:Connect(updateESP)
 
 -- UI Controls
 AutoParryTab:CreateToggle({
