@@ -47,7 +47,7 @@ end)
 -- Constants
 local BASE_THRESHOLD = 0.2 -- Tăng tốc phản xạ
 local IMMEDIATE_PARRY_DISTANCE = 15
-local sliderValue = 2
+local sliderValue = 20
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
@@ -102,7 +102,9 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     if ball:GetAttribute("target") == localPlayer.Name or isBallDangerous(ball) then
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+                if parryButtonPress then
+    parryButtonPress:FireServer()
+end
                 task.wait(0.3) -- Giảm thời gian chờ để parry nhanh hơn
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
@@ -111,19 +113,23 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     
     if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+            if parryButtonPress then
+    parryButtonPress:FireServer()
+end
             task.wait(0.1)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
     if antiCurveBall and velocity > 40 then
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        if parryButtonPress then
+    parryButtonPress:FireServer()
+end
     end
     
     if autoAttack and distance <= sliderValue then
         pcall(function()
-            attackButtonPress:Fire()
+            parryButtonPress:FireServer()
         end)
     end
 end)
