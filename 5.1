@@ -124,6 +124,13 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     parryButtonPress:FireServer()
 end
     end
+    
+    if autoAttack and distance <= sliderValue then
+        pcall(function()
+            attackButtonPress:Fire()
+        end)
+    end
+end)
 
 -- UI Controls
 AutoParryTab:CreateToggle({
