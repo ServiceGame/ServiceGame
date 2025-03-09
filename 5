@@ -5,7 +5,7 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local UserInputService = game:GetService("UserInputService")
-
+local Camera = workspace.CurrentCamera
 
 -- Kiểm tra và tải Rayfield UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -13,7 +13,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local localPlayer = players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local ballsFolder = workspace:FindFirstChild("Balls")
-local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
+local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replicatedStorage.Remotes:FindFirstChild("ParryButtonPress")
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
@@ -102,17 +102,13 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
                 task.wait(0.02)
                 distance = (HRP.Position - ball.Position).Magnitude
-            until distance > 10 or not isBallDangerous(ball)
+            until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and distance <= 10 then
+    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
-            if parryButtonPress then
-                parryButtonPress:FireServer()
-            else
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            end
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.02)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
@@ -122,10 +118,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
-    if autoAttack and distance <= 10 then
-        if attackButtonPress then
-            attackButtonPress:FireServer()
-        end
+    if autoAttack and distance <= sliderValue then
         pcall(function()
             attackButtonPress:Fire()
         end)
