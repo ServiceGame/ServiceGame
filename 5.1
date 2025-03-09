@@ -99,7 +99,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     if ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) then
         if (distance <= 10 and ball:GetAttribute("target") == localPlayer.Name) or timeToImpact <= BASE_THRESHOLD then
             repeat
-                UserInputService.InputBegan:Fire({KeyCode = Enum.KeyCode.F}, false)
+                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
                 task.wait(0.005)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
