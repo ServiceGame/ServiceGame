@@ -102,7 +102,10 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     if ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) then
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
-                if parryButtonPress then parryButtonPress:FireServer() end
+                if parryButtonPress then
+    parryButtonPress:FireServer()
+    task.wait(0.02) -- Giảm thời gian chờ để phản xạ nhanh hơn
+end
                 task.wait(0.3) -- Giảm thời gian chờ để parry nhanh hơn
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
@@ -112,7 +115,9 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             if parryButtonPress then
-                parryButtonPress:FireServer()
+    parryButtonPress:FireServer()
+    task.wait(0.02) -- Đảm bảo phản ứng nhanh nhưng không spam quá mức
+end
             end
             task.wait(0.1)
             distance = (HRP.Position - ball.Position).Magnitude
@@ -120,8 +125,10 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
     end
     
     if antiCurveBall and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and velocity > 10 then
-        if parryButtonPress then
-    parryButtonPress:FireServer()
+    if parryButtonPress then
+        parryButtonPress:FireServer()
+        task.wait(0.02) -- Giảm thời gian giữa các phản ứng
+    end
 end
     end
     
