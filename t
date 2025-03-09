@@ -13,7 +13,7 @@ local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
 local attackButtonPress = replicatedStorage.Remotes.AttackButtonPress
 
 -- Load Optimized UI Library
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Create UI Window
 local Window = Rayfield:CreateWindow({
