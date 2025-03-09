@@ -147,23 +147,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- UI Window
-local CreditsTab = Window:CreateTab("Credits")
-local CreditsSection = CreditsTab:CreateSection("Created by Wibu")
-
-local CreatorLabel = CreditsSection:CreateLabel("Created by: Wibu")
-local DiscordLabel = CreditsSection:CreateLabel("Discord: wibunek")
-
-local CopyDiscordButton = CreditsSection:CreateButton({
-    Name = "Copy Discord Link",
-    Callback = function()
-        setclipboard("https://discord.gg/gtQ54c43G3")
-        Rayfield:Notify({Title = "Discord Link", Content = "Copied to Clipboard!", Duration = 1})
-    end
-})
-local VisualTab = Window:CreateTab("Visuals")
-local ESPSection = VisualTab:CreateSection("Setting")
-
 -- ESP Ball Function
 local function createESPBall(ball)
     local billboard = Instance.new("BillboardGui")
@@ -269,6 +252,16 @@ local AutoAttackToggle = AutoParryTab:CreateToggle({
     CurrentValue = autoAttack,
     Callback = function(value)
         autoAttack = value
+        autoSaveConfig()
+    end
+})
+
+local VisualTab = Window:CreateTab("Visuals")
+local ESPSection = VisualTab:CreateSection("Setting")
+   Name = "Enable Ball ESP",
+    CurrentValue = ESPEnabled,
+    Callback = function(value)
+       autoAttack = value
         autoSaveConfig()
     end
 })
