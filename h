@@ -51,6 +51,8 @@ local sliderValue = 15
 local isRunning = false
 local autoAttack = false
 local autoSpamParry = false
+local blatantAutoSpamParry = false -- Chế độ spam parry mạnh
+local autoSpamParryKeybind = Enum.KeyCode.X -- Phím tắt để bật/tắt Auto Spam Parry
 local antiCurveBall = false
 
 local function getClosestBall()
@@ -78,7 +80,7 @@ local function isBallDangerous(ball)
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(30) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
+    return angle < math.rad(15) and isBallOnScreen(ball) -- Nếu góc nhỏ và bóng trên màn hình, bóng đang hướng về mình
 end
 
 local function timeUntilImpact(ball)
@@ -103,13 +105,13 @@ RunService.PreSimulation:Connect(function()
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.05)
+                task.wait(blatantAutoSpamParry and 0.01 or 0.03)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
     end
     
-    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if (autoSpamParry or blatantAutoSpamParry) and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.05)
@@ -137,21 +139,15 @@ AutoParryTab:CreateToggle({
     end
 })
 
-AutoParryTab:CreateToggle({
-    Name = "Auto Attack After Parry",
-    CurrentValue = false,
-    Callback = function(value)
-        autoAttack = value
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.B then
+        blatantAutoSpamParry = not blatantAutoSpamParry
+        Rayfield:Notify({Title = "Blatant Auto Spam Parry", Content = blatantAutoSpamParry and "Enabled" or "Disabled", Duration = 1})
     end
-})
-
-AutoParryTab:CreateToggle({
-    Name = "Auto Spam Parry (When Ball is Very Close)",
-    CurrentValue = false,
-    Callback = function(value)
-        autoSpamParry = value
+    if not gameProcessed and input.KeyCode == autoSpamParryKeybind then
+        autoSpamParry = not autoSpamParry
     end
-})
+end)
 
 AutoParryTab:CreateToggle({
     Name = "Anti Curve Ball",
