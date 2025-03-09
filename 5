@@ -139,11 +139,17 @@ AutoParryTab:CreateToggle({
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == autoSpamKeybind then
-        autoSpamParry = not autoSpamParry
-        Rayfield:Notify({Title = "Auto Spam Parry", Content = autoSpamParry and "Enabled" or "Disabled", Duration = 1})
+        autoSpamParry = true
+        Rayfield:Notify({Title = "Auto Spam Parry", Content = "Enabled", Duration = 1})
     end
 end)
 
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == autoSpamKeybind then
+        autoSpamParry = false
+        Rayfield:Notify({Title = "Auto Spam Parry", Content = "Disabled", Duration = 1})
+    end
+  
 AutoParryTab:CreateToggle({
     Name = "Anti Curve Ball",
     CurrentValue = false,
