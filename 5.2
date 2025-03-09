@@ -45,8 +45,8 @@ task.spawn(function()
 end)
 
 -- Constants
-local BASE_THRESHOLD = 0.008
-local IMMEDIATE_PARRY_DISTANCE = math.clamp(velocity / 4, 7, 25)
+local BASE_THRESHOLD = 0.2
+local IMMEDIATE_PARRY_DISTANCE = 15
 local sliderValue = 20
 local isRunning = false
 local autoAttack = false
@@ -100,7 +100,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         if (distance <= 10 and ball:GetAttribute("target") == localPlayer.Name) or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.005)
+                task.wait(0.02)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
