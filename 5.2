@@ -17,6 +17,7 @@ local parryButtonPress = replicatedStorage:FindFirstChild("Remotes") and replica
 
 -- UI Setup
 local Window = Rayfield:CreateWindow({
+    VisualTab = Window:CreateTab("Visual") -- Thêm Tab Visual
     Name = "AutoParry System",
     LoadingTitle = "Blade Ball AutoParry",
     LoadingSubtitle = "Optimized by Dev",
@@ -106,7 +107,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         end
     end
     
-    if autoSpamParry and distance <= IMMEDIATE_PARRY_DISTANCE then
+    if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.02)
@@ -114,7 +115,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if antiCurveBall and velocity > 50 then
+    if antiCurveBall and ball:GetAttribute("target") == localPlayer.Name and velocity > 50 then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
@@ -124,6 +125,18 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
         end)
     end
 end)
+
+-- ESP Ball và Khoảng cách Ball đến người chơi
+local function updateESP()
+    for _, ball in ipairs(ballsFolder:GetChildren()) do
+        if ball:IsA("Part") and ball:GetAttribute("realBall") then
+            local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
+            ball.BrickColor = BrickColor.new("Really red") -- Đổi màu bóng khi nó là mục tiêu
+            Rayfield:Notify({Title = "Ball Distance", Content = "Ball is " .. math.floor(distance) .. "m away", Duration = 1})
+        end
+    end
+end
+RunService.Heartbeat:Connect(updateESP)
 
 -- UI Controls
 AutoParryTab:CreateToggle({
@@ -152,7 +165,7 @@ AutoParryTab:CreateToggle({
 
 AutoParryTab:CreateSlider({
     Name = "Parry Distance",
-    Range = {5, 50},
+    Range = {1, 100},
     Increment = 1,
     CurrentValue = sliderValue,
     Callback = function(value)
@@ -162,7 +175,7 @@ AutoParryTab:CreateSlider({
 
 AutoParryTab:CreateSlider({
     Name = "Reflex Speed",
-    Range = {0.01, 0.1},
+    Range = {0.01, 1},
     Increment = 0.01,
     CurrentValue = BASE_THRESHOLD,
     Callback = function(value)
