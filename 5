@@ -25,7 +25,6 @@ local Window = Rayfield:CreateWindow({
 })
 
 local AutoParryTab = Window:CreateTab("AutoParry")
-local AutoParrySection = AutoParryTab:CreateSection("Controls")
 local SettingsSection = AutoParryTab:CreateSection("Settings")
 
 -- Hiển thị FPS & PING
@@ -78,7 +77,7 @@ local function isBallDangerous(ball)
     local ballDirection = ball.Velocity.Unit
     local toPlayer = (character.PrimaryPart.Position - ball.Position).Unit
     local angle = math.acos(ballDirection:Dot(toPlayer))
-    return angle < math.rad(360) and isBallOnScreen(ball)
+    return angle < math.rad(120) and isBallOnScreen(ball)
 end
 
 local function timeUntilImpact(ball)
@@ -86,7 +85,7 @@ local function timeUntilImpact(ball)
     local direction = (character.PrimaryPart.Position - ball.Position).Unit
     local relativeVelocity = ball.Velocity:Dot(direction)
     local distance = (ball.Position - character.PrimaryPart.Position).Magnitude
-    return relativeVelocity > 10 and (distance - sliderValue) / relativeVelocity or math.huge
+    return relativeVelocity > 60 and (distance - sliderValue) / relativeVelocity or math.huge
 end
 
 RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc độ phản hồi
@@ -103,7 +102,7 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
         if distance <= IMMEDIATE_PARRY_DISTANCE or timeToImpact <= BASE_THRESHOLD then
             repeat
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.1) -- Giảm thời gian chờ để parry nhanh hơn
+                task.wait(0.3) -- Giảm thời gian chờ để parry nhanh hơn
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
         end
@@ -117,7 +116,7 @@ RunService.Heartbeat:Connect(function() -- Dùng Heartbeat để tăng tốc đ�
         until distance > IMMEDIATE_PARRY_DISTANCE
     end
     
-    if antiCurveBall and velocity > 60 then
+    if antiCurveBall and velocity > 30 then
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
     end
     
