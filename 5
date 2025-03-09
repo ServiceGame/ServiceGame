@@ -99,9 +99,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     if ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) then
         if (distance <= 10 and ball:GetAttribute("target") == localPlayer.Name) or timeToImpact <= BASE_THRESHOLD then
             repeat
-                if parryButtonPress then
-                parryButtonPress:FireServer()
-            end
+                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
                 task.wait(0.3)
                 distance = (HRP.Position - ball.Position).Magnitude
             until distance > IMMEDIATE_PARRY_DISTANCE or not isBallDangerous(ball)
@@ -110,9 +108,7 @@ local heartbeatConnection = RunService.Heartbeat:Connect(function()
     
     if autoSpamParry and ball:GetAttribute("target") == localPlayer.Name and isBallDangerous(ball) and distance <= IMMEDIATE_PARRY_DISTANCE then
         repeat
-            if parryButtonPress then
-                parryButtonPress:FireServer()
-            end
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             task.wait(0.1)
             distance = (HRP.Position - ball.Position).Magnitude
         until distance > IMMEDIATE_PARRY_DISTANCE
