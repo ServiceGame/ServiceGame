@@ -53,6 +53,7 @@ local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
 local Balls = workspace:WaitForChild("Balls", 9e9)
 
 local function VerifyBall(Ball)
@@ -63,38 +64,37 @@ local function IsTarget()
     return Player.Character and Player.Character:FindFirstChild("Highlight")
 end
 
-local function Parry() 
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+local function Parry()
+    Remotes:WaitForChild("ParryButtonPress"):Fire()
 end
 
--- Optimized Auto Parry for High Ping with Parry Range
+-- Optimized Auto Parry for High Ping with Parry Range and Remote Support
 Balls.ChildAdded:Connect(function(Ball)
-    if not VerifyBall(Ball) then return end
-
+    if not VerifyBall(Ball) then
+        return
+    end
+    
+    print(`Ball Spawned: {Ball}`)
+    
     local OldPosition = Ball.Position
-    local LastTick = tick()
-    local Connection
-
-    Connection = RunService.Heartbeat:Connect(function()
-        if not Ball.Parent then
-            Connection:Disconnect()
-            return
-        end
-
-        if IsAutoParrying and IsTarget() then
+    local OldTick = tick()
+    
+    Ball:GetPropertyChangedSignal("Position"):Connect(function()
+        if IsTarget() then -- No need to do the math if we're not being attacked.
             local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude
-            local Velocity = (OldPosition - Ball.Position).Magnitude / (tick() - LastTick)
-            local PingCompensation = math.clamp(Stats.Network.Ping.Value / 1000, 0.05, 0.2)
-
-            if Velocity > 0 and (Distance / Velocity) <= (ParryRange + PingCompensation * 20) then
+            local Velocity = (OldPosition - Ball.Position).Magnitude -- Fix for .Velocity not working. Yes I got the lowest possible grade in accuplacer math.
+            
+            print(`Distance: {Distance}\nVelocity: {Velocity}\nTime: {Distance / Velocity}`)
+        
+            if (Distance / Velocity) <= 10 then -- Sorry for the magic number. This just works. No, you don't get a slider for this because it's 2am.
                 Parry()
-                Connection:Disconnect()
             end
         end
-
-        LastTick = tick()
-        OldPosition = Ball.Position
+        
+        if (tick() - OldTick >= 1/60) then -- Don't want it to update too quickly because my velocity implementation is aids. Yes, I tried Ball.Velocity. No, it didn't work.
+            OldTick = tick()
+            OldPosition = Ball.Position
+        end
     end)
 end)
 
