@@ -1,0 +1,425 @@
+local v0 = string.char;
+local v1 = string.byte;
+local v2 = string.sub;
+local v3 = bit32 or bit ;
+local v4 = v3.bxor;
+local v5 = table.concat;
+local v6 = table.insert;
+local function v7(v54, v55)
+    local v56 = {};
+    for v100 = 1, # v54 do
+        v6(v56, v0(v4(v1(v2(v54, v100, v100 + 1)), v1(v2(v55, 1 + (v100 % # v55), 1 + (v100 % # v55) + 1))) % 256));
+    end
+    return v5(v56)
+end
+local v8 = (identifyexecutor and identifyexecutor()) or 'Unknown' ;
+local v9 = loadstring(game:HttpGet('https://sirius.menu/rayfield'))();
+local v10 = v9:CreateWindow({
+    Name = 'ServiceGame - Rivals' .. v8,
+    Icon = 0,
+    LoadingTitle = 'Rivals ServiceGame',
+    LoadingSubtitle = 'by Wibu',
+    Theme = 'Default',
+    DisableRayfieldPrompts = true,
+    DisableBuildWarnings = false,
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = RivalsNx,
+        FileName = 'RivalsSG'
+    },
+    Discord = {
+        Enabled = false,
+        Invite = 'gtQ54c43G3',
+        RememberJoins = true
+    },
+    KeySystem = false,
+    KeySettings = {
+        Title = 'Rivals',
+        Subtitle = 'Key System',
+        Note = "please don't bypass link. (key in discord)",
+        FileName = 'Key',
+        SaveKey = true,
+        GrabKeyFromSite = true,
+        Key = {
+            'https://pastebin.com/raw/NNh2VuUJ'
+        }
+    }
+});
+local v11 = game:GetService('Players');
+local v12 = game:GetService('RunService');
+local v13 = game:GetService('UserInputService');
+local v14 = v11.LocalPlayer;
+local v15 = workspace.CurrentCamera;
+local v16 = false;
+local v17 = false;
+local v18 = Color3.fromRGB(255, 255, 255);
+local v19 = false;
+local v20 = Drawing.new('Circle');
+v20.Visible = false;
+v20.Radius = 100;
+v20.Color = v18;
+v20.Thickness = 2;
+v20.Filled = false;
+v20.Transparency = 1;
+local function v27()
+    return Color3.fromHSV((tick() % (5)) / (5), 1, 1)
+end
+local function v28(v57)
+    local v58 = 0;
+    local v59;
+    local v60;
+    while true do
+        if (v58 == (1)) then
+            for v113, v114 in ipairs(v11:GetPlayers()) do
+                if ((v114 ~= v14) and v114.Character and v114.Character:FindFirstChild('HumanoidRootPart')) then
+                    local v124 = 0;
+                    local v125;
+                    local v126;
+                    local v127;
+                    while true do
+                        if (v124 == 1) then
+                            v127 = nil;
+                            while true do
+                                if (v125 == (1)) then
+                                    if (v127 < v60) then
+                                        local v146 = 0;
+                                        local v147;
+                                        while true do
+                                            if (v146 == 0) then
+                                                v147 = 0;
+                                                while true do
+                                                    if (v147 == (0)) then
+                                                        v60 = v127;
+                                                        v59 = v114;
+                                                        break
+                                                    end
+                                                end
+                                                break
+                                            end
+                                        end
+                                    end
+                                    break
+                                end
+                                if (v125 == (0)) then
+                                    local v144 = 0;
+                                    while true do
+                                        if (v144 == 1) then
+                                            v125 = 1;
+                                            break
+                                        end
+                                        if (v144 == 0) then
+                                            v126 = v15:WorldToViewportPoint(v114.Character.HumanoidRootPart.Position);
+                                            v127 = (Vector2.new(v126.X, v126.Y) - v57.Position).Magnitude;
+                                            v144 = 1;
+                                        end
+                                    end
+                                end
+                            end
+                            break
+                        end
+                        if (v124 == (0)) then
+                            v125 = 0;
+                            v126 = nil;
+                            v124 = 1;
+                        end
+                    end
+                end
+            end
+            return v59
+        end
+        if (v58 == 0) then
+            v59 = nil;
+            v60 = v57.Radius;
+            v58 = 1;
+        end
+    end
+end
+v12.RenderStepped:Connect(function()
+    local v61 = v13:GetMouseLocation();
+    v20.Position = v61;
+    if v17 then
+        v20.Color = v27();
+    end
+end);
+local v29 = v10:CreateTab("🎯 Main");
+local v30 = v29:CreateSection('AimLock');
+local v31 = v29:CreateToggle({
+    Name = 'Enable Aimbot (spam click)',
+    CurrentValue = false,
+    Flag = 'Toggle_Aimlock',
+    Callback = function(v63)
+        v20.Visible = v63;
+        v16 = v63;
+    end
+});
+local v32 = v29:CreateColorPicker({
+    Name = 'FOV Color ',
+    Color = v18,
+    Flag = 'ColorPicker_Aimlock',
+    Callback = function(v65)
+        v18 = v65;
+        if not v17 then
+            v20.Color = v65;
+        end
+    end
+});
+local v33 = v29:CreateSlider({
+    Name = 'FOV Size ',
+    Range = {
+        50,
+        500
+    },
+    Increment = 10,
+    Suffix = 'px',
+    CurrentValue = 100,
+    Flag = 'Slider_AimlockFOV',
+    Callback = function(v66)
+        v20.Radius = v66;
+    end
+});
+local v34 = v29:CreateToggle({
+    Name = 'Enable RGB FOV ',
+    CurrentValue = false,
+    Flag = 'Toggle_RGB_Aimlock',
+    Callback = function(v68)
+        local v69 = 0;
+        while true do
+            if (v69 == 0) then
+                v17 = v68;
+                if not v68 then
+                    v20.Color = v18;
+                end
+                break
+            end
+        end
+    end
+});
+v13.InputBegan:Connect(function(v70, v71)
+    local v72 = 0;
+    local v73;
+    while true do
+        if (v72 == (0)) then
+            v73 = 0;
+            while true do
+                if (v73 == 0) then
+                    if v71 then
+                        return
+                    end
+                    if (v16 and (v70.UserInputType == Enum.UserInputType.MouseButton1)) then
+                        local v132 = 0;
+                        local v133;
+                        while true do
+                            if (v132 == (0)) then
+                                v133 = v28(v20);
+                                if (v133 and v133.Character and v133.Character:FindFirstChild('HumanoidRootPart')) then
+                                    v15.CFrame = CFrame.new(v15.CFrame.Position, v133.Character.HumanoidRootPart.Position);
+                                end
+                                break
+                            end
+                        end
+                    end
+                    break
+                end
+            end
+            break
+        end
+    end
+end);
+local v35 = v10:CreateTab("🔍 ESP");
+local v36 = v35:CreateToggle({
+    Name = 'Enable ESP',
+    CurrentValue = false,
+    Flag = 'Toggle_ESP',
+    Callback = function(v74)
+        v19 = v74;
+    end
+});
+local function v37(v75)
+    if (v75 == v14) then
+        return
+    end
+    local v76 = Drawing.new('Square');
+    v76.Visible = false;
+    v76.Color = Color3.fromRGB(255, 0, 0);
+    v76.Thickness = 2;
+    v76.Filled = false;
+    v76.Transparency = 1;
+    local v82 = Drawing.new('Line');
+    v82.Visible = false;
+    v82.Color = Color3.fromRGB(0, 255, 0);
+    v82.Thickness = 3;
+    local function v86()
+        if (v19 and v75.Character and v75.Character:FindFirstChild('HumanoidRootPart') and v75.Character:FindFirstChild('Humanoid')) then
+            local v106 = v75.Character.HumanoidRootPart;
+            local v107 = v75.Character:FindFirstChild('Head');
+            local v108 = v75.Character.Humanoid;
+            local v109 = v75.Character:FindFirstChild('UpperTorso') or v75.Character:FindFirstChild('Torso') ;
+            local v110, v111 = v15:WorldToViewportPoint(v106.Position);
+            if (v111 and v107 and v109) then
+                local v116 = 0;
+                local v117;
+                local v118;
+                local v119;
+                local v120;
+                local v121;
+                local v122;
+                while true do
+                    if (v116 == (3)) then
+                        v82.Visible = true;
+                        break
+                    end
+                    if (v116 == (0)) then
+                        v117 = v15:WorldToViewportPoint(v107.Position + Vector3.new(0, 0.2999999999999545, 0));
+                        v118 = v15:WorldToViewportPoint(v106.Position - Vector3.new(0, v108.HipHeight + 2, 0));
+                        v119 = math.abs(v117.Y - v118.Y);
+                        v120 = v119 / 2 ;
+                        v116 = 1;
+                    end
+                    if (v116 == 2) then
+                        v122 = v119 * v121 ;
+                        v82.From = Vector2.new(v76.Position.X - (6), v76.Position.Y + v119);
+                        v82.To = Vector2.new(v76.Position.X - (6), (v76.Position.Y + v119) - v122);
+                        v82.Color = Color3.fromRGB(255 - (v121 * 255), v121 * (255), 0);
+                        v116 = 3;
+                    end
+                    if (v116 == 1) then
+                        v76.Size = Vector2.new(v120, v119);
+                        v76.Position = Vector2.new(v110.X - (v120 / 2), v117.Y);
+                        v76.Visible = true;
+                        v121 = v108.Health / v108.MaxHealth ;
+                        v116 = 2;
+                    end
+                end
+            else
+                local v123 = 0;
+                while true do
+                    if (v123 == (0)) then
+                        v76.Visible = false;
+                        v82.Visible = false;
+                        break
+                    end
+                end
+            end
+        else
+            local v112 = 0;
+            while true do
+                if (v112 == (0)) then
+                    v76.Visible = false;
+                    v82.Visible = false;
+                    break
+                end
+            end
+        end
+    end
+    v12.RenderStepped:Connect(v86);
+end
+for v87, v88 in pairs(v11:GetPlayers()) do
+    v37(v88);
+end
+v11.PlayerAdded:Connect(v37);
+local v38 = false;
+local v39 = false;
+local v40 = false;
+local v41 = false;
+local v42 = 16;
+local v43 = 50;
+local function v44(v89)
+    if (v14.Character and v14.Character:FindFirstChild('Humanoid')) then
+        v14.Character.Humanoid.WalkSpeed = (v38 and v89) or v42 ;
+    end
+end
+local function v45(v90)
+    if (v14.Character and v14.Character:FindFirstChild('Humanoid')) then
+        v14.Character.Humanoid.JumpPower = (v39 and v90) or v43 ;
+    end
+end
+local function v46(v91)
+    local v92 = 0;
+    while true do
+        if (v92 == (0)) then
+            v40 = v91;
+            v12.Stepped:Connect(function()
+                if (v40 and v14.Character) then
+                    for v130, v131 in pairs(v14.Character:GetChildren()) do
+                        if v131:IsA('BasePart') then
+                            v131.CanCollide = false;
+                        end
+                    end
+                end
+            end);
+            break
+        end
+    end
+end
+v13.JumpRequest:Connect(function()
+    if (v41 and v14.Character and v14.Character:FindFirstChild('Humanoid')) then
+        v14.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping);
+    end
+end);
+local v47 = v10:CreateTab("⚡ Player Mods");
+local v48 = v47:CreateSlider({
+    Name = 'Vitesse du Joueur',
+    Range = {
+        16,
+        100
+    },
+    Increment = 2,
+    CurrentValue = v42,
+    Flag = 'Slider_WalkSpeed',
+    Callback = function(v93)
+        v44(v93);
+    end
+});
+local v49 = v47:CreateToggle({
+    Name = 'Modifier Vitesse',
+    CurrentValue = false,
+    Flag = 'Toggle_WalkSpeed',
+    Callback = function(v94)
+        v38 = v94;
+        v44(v48.CurrentValue);
+    end
+});
+local v50 = v47:CreateSlider({
+    Name = 'Hauteur de Saut',
+    Range = {
+        50,
+        300
+    },
+    Increment = 10,
+    CurrentValue = v43,
+    Flag = 'Slider_JumpPower',
+    Callback = function(v95)
+        v45(v95);
+    end
+});
+local v51 = v47:CreateToggle({
+    Name = 'Modifier Saut',
+    CurrentValue = false,
+    Flag = 'Toggle_JumpPower',
+    Callback = function(v96)
+        local v97 = 0;
+        while true do
+            if (v97 == (0)) then
+                v39 = v96;
+                v45(v50.CurrentValue);
+                break
+            end
+        end
+    end
+});
+local v52 = v47:CreateToggle({
+    Name = 'Activer NoClip',
+    CurrentValue = false,
+    Flag = 'Toggle_NoClip',
+    Callback = function(v98)
+        v46(v98);
+    end
+});
+local v53 = v47:CreateToggle({
+    Name = 'Saut Infini',
+    CurrentValue = false,
+    Flag = 'Toggle_InfiniteJump',
+    Callback = function(v99)
+        v41 = v99;
+    end
+});
