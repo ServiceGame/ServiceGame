@@ -1,11 +1,11 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Soul hub",
+   Name = "ServiceGame - Blade Ball",
    Icon = 0,
-   LoadingTitle = "Soul hub",
-   LoadingSubtitle = "by nonamefound",
-   Theme = "Ocean",
+   LoadingTitle = "ServiceGame",
+   LoadingSubtitle = "by Wibu",
+   Theme = "Dark",
 
    DisableRayfieldPrompts = false,
    DisableBuildWarnings = false,
@@ -13,12 +13,12 @@ local Window = Rayfield:CreateWindow({
    ConfigurationSaving = {
       Enabled = true,
       FolderName = nil,
-      FileName = "Big Hub"
+      FileName = "SG"
    },
 
    Discord = {
       Enabled = false,
-      Invite = "noinvitelink",
+      Invite = "gtQ54c43G3",
       RememberJoins = true
    },
 
@@ -37,8 +37,8 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("Main", 4483362458)
 
 Rayfield:Notify({
-   Title = "Hello! Thanks for using the hub",
-   Content = "by nonamefound",
+   Title = "Hello! Thanks for using ServiceGame",
+   Content = "by Wibu",
    Duration = 6.5,
    Image = 4483362458,
 })
@@ -47,17 +47,16 @@ Rayfield:Notify({
 local IsAutoParrying = false
 local Players = game:GetService("Players")
 local VirtualInputManager = game:GetService("VirtualInputManager")
-local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local Balls = workspace:WaitForChild("Balls", 9e9)
 
 local function VerifyBall(Ball)
-    return Ball and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
+    return typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
 end
 
 local function IsTarget()
-    return Player.Character and Player.Character:FindFirstChild("Highlight")
+    return (Player.Character and Player.Character:FindFirstChild("Highlight"))
 end
 
 local function Parry()
@@ -65,32 +64,27 @@ local function Parry()
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
 end
 
--- Optimized Auto Parry Logic
+-- Auto Parry Logic (Now with Toggle Support)
 Balls.ChildAdded:Connect(function(Ball)
     if not VerifyBall(Ball) then return end
 
     local OldPosition = Ball.Position
-    local LastTick = tick()
+    local OldTick = tick()
 
-    local Connection
-    Connection = RunService.Heartbeat:Connect(function()
-        if not Ball.Parent then
-            Connection:Disconnect()
-            return
-        end
-
+    Ball:GetPropertyChangedSignal("Position"):Connect(function()
         if IsAutoParrying and IsTarget() then
             local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude
-            local Velocity = (OldPosition - Ball.Position).Magnitude / (tick() - LastTick)
+            local Velocity = (OldPosition - Ball.Position).Magnitude
 
-            if Velocity > 0 and (Distance / Velocity) <= 10 then
+            if (Distance / Velocity) <= 15 then
                 Parry()
-                Connection:Disconnect()
             end
         end
 
-        LastTick = tick()
-        OldPosition = Ball.Position
+        if (tick() - OldTick >= 1/120) then
+            OldTick = tick()
+            OldPosition = Ball.Position
+        end
     end)
 end)
 
@@ -109,7 +103,7 @@ local PlayerTab = Window:CreateTab("Player", 4483362458)
 
 local Slider = PlayerTab:CreateSlider({
    Name = "Give Walkspeed",
-   Range = {0, 500},
+   Range = {0, 100},
    Increment = 1,
    Suffix = "Speed",
    CurrentValue = 16,
@@ -126,7 +120,7 @@ local Button = MainTab:CreateButton({
          ["AutoParry"] = true,
          ["PingBased"] = true,
          ["PingBasedOffset"] = 0,
-         ["DistanceToParry"] = 0.8,
+         ["DistanceToParry"] = 1,
          ["BallSpeedCheck"] = true,
       }
       loadstring(game:HttpGet("https://raw.githubusercontent.com/Alexisisback/Blade-ball-Auto-parry-Etc/main/Manual%20spam%2BAuto%20parry"))()
