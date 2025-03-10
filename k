@@ -45,6 +45,7 @@ Rayfield:Notify({
 
 -- Auto Parry Variables
 local IsAutoParrying = false
+local ParryRange = 10 -- Default Parry Range
 local Players = game:GetService("Players")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -63,11 +64,11 @@ local function IsTarget()
 end
 
 local function Parry() 
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
-    end
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+end
 
--- Optimized Auto Parry for High Ping
+-- Optimized Auto Parry for High Ping with Parry Range
 Balls.ChildAdded:Connect(function(Ball)
     if not VerifyBall(Ball) then return end
 
@@ -86,7 +87,7 @@ Balls.ChildAdded:Connect(function(Ball)
             local Velocity = (OldPosition - Ball.Position).Magnitude / (tick() - LastTick)
             local PingCompensation = math.clamp(Stats.Network.Ping.Value / 1000, 0.05, 0.2)
 
-            if Velocity > 0 and (Distance / Velocity) <= (10 + PingCompensation * 20) then
+            if Velocity > 0 and (Distance / Velocity) <= (ParryRange + PingCompensation * 20) then
                 Parry()
                 Connection:Disconnect()
             end
@@ -104,6 +105,19 @@ local AutoParryToggle = MainTab:CreateToggle({
    Flag = "AutoParryToggle",
    Callback = function(state)
       IsAutoParrying = state
+   end
+})
+
+-- Parry Range Slider
+local ParryRangeSlider = MainTab:CreateSlider({
+   Name = "Parry Range",
+   Range = {0, 50},
+   Increment = 1,
+   Suffix = "Units",
+   CurrentValue = ParryRange,
+   Flag = "ParryRangeSlider",
+   Callback = function(value)
+      ParryRange = value
    end
 })
 
