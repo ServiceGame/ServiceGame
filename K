@@ -52,7 +52,6 @@ local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
-local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
 local Balls = workspace:WaitForChild("Balls", 9e9)
 
 local function VerifyBall(Ball)
@@ -64,9 +63,7 @@ local function IsTarget()
 end
 
 local function Parry()
-   return if Remotes:FindFirstChild("Parry") then
-        Remotes.Parry:FireServer()
-    else
+   return 
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
     end
