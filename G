@@ -62,12 +62,10 @@ local function IsTarget()
     return Player.Character and Player.Character:FindFirstChild("Highlight")
 end
 
-local function Parry()
-   return 
+local function Parry() 
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
     end
-end
 
 -- Optimized Auto Parry for High Ping
 Balls.ChildAdded:Connect(function(Ball)
