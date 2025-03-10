@@ -48,6 +48,8 @@ local IsAutoParrying = false
 local Players = game:GetService("Players")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Stats = game:GetService("Stats")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
@@ -70,27 +72,44 @@ local function Parry()
     end
 end
 
--- Auto Parry Logic (Now with Remote Support)
+-- Display Ping and FPS
+local PingLabel = MainTab:CreateLabel("Ping: Calculating...")
+local FpsLabel = MainTab:CreateLabel("FPS: Calculating...")
+
+RunService.RenderStepped:Connect(function()
+    local Ping = math.floor((Stats.Network:FindFirstChild("Ping") and Stats.Network.Ping.Value or 0) * 1000)
+    local Fps = math.floor(1 / RunService.RenderStepped:Wait())
+    PingLabel:SetText("Ping: " .. Ping .. " ms")
+    FpsLabel:SetText("FPS: " .. Fps)
+end)
+
+-- Optimized Auto Parry for High Ping
 Balls.ChildAdded:Connect(function(Ball)
     if not VerifyBall(Ball) then return end
 
     local OldPosition = Ball.Position
-    local OldTick = tick()
+    local LastTick = tick()
+    local Connection
 
-    Ball:GetPropertyChangedSignal("Position"):Connect(function()
+    Connection = RunService.Heartbeat:Connect(function()
+        if not Ball.Parent then
+            Connection:Disconnect()
+            return
+        end
+
         if IsAutoParrying and IsTarget() then
             local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude
-            local Velocity = (OldPosition - Ball.Position).Magnitude
+            local Velocity = (OldPosition - Ball.Position).Magnitude / (tick() - LastTick)
+            local PingCompensation = math.clamp(Stats.Network.Ping.Value / 1000, 0.05, 0.2)
 
-            if (Distance / Velocity) <= 10 then
+            if Velocity > 0 and (Distance / Velocity) <= (10 + PingCompensation * 20) then
                 Parry()
+                Connection:Disconnect()
             end
         end
 
-        if (tick() - OldTick >= 1/60) then
-            OldTick = tick()
-            OldPosition = Ball.Position
-        end
+        LastTick = tick()
+        OldPosition = Ball.Position
     end)
 end)
 
@@ -108,7 +127,7 @@ local AutoParryToggle = MainTab:CreateToggle({
 local PlayerTab = Window:CreateTab("Player", 4483362458)
 
 local Slider = PlayerTab:CreateSlider({
-   Name = "Give Walkspeed",
+   Name = "WalkSpeed",
    Range = {0, 100},
    Increment = 1,
    Suffix = "Speed",
@@ -126,7 +145,7 @@ local Button = MainTab:CreateButton({
          ["AutoParry"] = true,
          ["PingBased"] = true,
          ["PingBasedOffset"] = 0,
-         ["DistanceToParry"] = 1,
+         ["DistanceToParry"] = 1.2,
          ["BallSpeedCheck"] = true,
       }
       loadstring(game:HttpGet("https://raw.githubusercontent.com/Alexisisback/Blade-ball-Auto-parry-Etc/main/Manual%20spam%2BAuto%20parry"))()
