@@ -64,7 +64,7 @@ local function IsTarget()
 end
 
 local function Parry()
-    if Remotes:FindFirstChild("Parry") then
+   return if Remotes:FindFirstChild("Parry") then
         Remotes.Parry:FireServer()
     else
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
