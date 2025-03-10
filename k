@@ -72,17 +72,6 @@ local function Parry()
     end
 end
 
--- Display Ping and FPS
-local PingLabel = MainTab:CreateLabel("Ping: Calculating...")
-local FpsLabel = MainTab:CreateLabel("FPS: Calculating...")
-
-RunService.RenderStepped:Connect(function()
-    local Ping = math.floor((Stats.Network:FindFirstChild("Ping") and Stats.Network.Ping.Value or 0) * 1000)
-    local Fps = math.floor(1 / RunService.RenderStepped:Wait())
-    PingLabel:SetText("Ping: " .. Ping .. " ms")
-    FpsLabel:SetText("FPS: " .. Fps)
-end)
-
 -- Optimized Auto Parry for High Ping
 Balls.ChildAdded:Connect(function(Ball)
     if not VerifyBall(Ball) then return end
