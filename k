@@ -72,15 +72,20 @@ local function Parry()
     end
 end
 
--- Display Ping and FPS
-local PingLabel = MainTab:CreateLabel("Ping: Calculating...")
-local FpsLabel = MainTab:CreateLabel("FPS: Calculating...")
+-- Hiển thị FPS & PING
+local FPSLabel = AutoParryTab:CreateLabel("FPS: Loading...")
+local PingLabel = AutoParryTab:CreateLabel("PING: Loading...")
 
-RunService.RenderStepped:Connect(function()
-    local Ping = math.floor((Stats.Network:FindFirstChild("Ping") and Stats.Network.Ping.Value or 0) * 1000)
-    local Fps = math.floor(1 / RunService.RenderStepped:Wait())
-    PingLabel:SetText("Ping: " .. Ping .. " ms")
-    FpsLabel:SetText("FPS: " .. Fps)
+task.spawn(function()
+    while true do
+        local fps = math.floor(1 / RunService.RenderStepped:Wait())
+        local ping = math.floor(players.LocalPlayer:GetNetworkPing() * 1000) -- Chuyển thành mili giây
+
+        FPSLabel:Set("FPS: " .. fps)
+        PingLabel:Set("PING: " .. ping .. "ms")
+
+        task.wait(1) -- Cập nhật mỗi giây
+    end
 end)
 
 -- Optimized Auto Parry for High Ping
