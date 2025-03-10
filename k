@@ -47,36 +47,32 @@ Rayfield:Notify({
 local IsAutoParrying = false
 local Players = game:GetService("Players")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
 local Balls = workspace:WaitForChild("Balls", 9e9)
 
--- Anticheat bypass
-loadstring(game:GetObjects("rbxassetid://15900013841")[1].Source)()
-
 local function VerifyBall(Ball)
- return 
-     typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
+    return Ball and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
 end
 
 local function IsTarget()
-  return 
-     (Player.Character and Player.Character:FindFirstChild("Highlight"))
+    return Player.Character and Player.Character:FindFirstChild("Highlight")
 end
 
 local function Parry()
-  return
-     Remotes:WaitForChild("ParryButtonPress"):Fire()
+    if Remotes:FindFirstChild("Parry") then
+        Remotes.Parry:FireServer()
+    else
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+    end
 end
 
--- Auto Parry Logic (Now with Toggle Support)
+-- Auto Parry Logic (Now with Remote Support)
 Balls.ChildAdded:Connect(function(Ball)
-    if not VerifyBall(Ball) then 
-   return 
-end
-
- print(`Ball Spawned: {Ball}`)
+    if not VerifyBall(Ball) then return end
 
     local OldPosition = Ball.Position
     local OldTick = tick()
