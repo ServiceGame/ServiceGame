@@ -49,7 +49,11 @@ local Players = game:GetService("Players")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
 local Balls = workspace:WaitForChild("Balls", 9e9)
+
+-- Anticheat bypass
+loadstring(game:GetObjects("rbxassetid://15900013841")[1].Source)()
 
 local function VerifyBall(Ball)
     return typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
@@ -60,13 +64,16 @@ local function IsTarget()
 end
 
 local function Parry()
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+   Remotes:WaitForChild("ParryButtonPress"):Fire()
 end
 
 -- Auto Parry Logic (Now with Toggle Support)
 Balls.ChildAdded:Connect(function(Ball)
-    if not VerifyBall(Ball) then return end
+    if not VerifyBall(Ball) then 
+   return 
+end
+
+ print(`Ball Spawned: {Ball}`)
 
     local OldPosition = Ball.Position
     local OldTick = tick()
@@ -76,12 +83,12 @@ Balls.ChildAdded:Connect(function(Ball)
             local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude
             local Velocity = (OldPosition - Ball.Position).Magnitude
 
-            if (Distance / Velocity) <= 15 then
+            if (Distance / Velocity) <= 10 then
                 Parry()
             end
         end
 
-        if (tick() - OldTick >= 1/120) then
+        if (tick() - OldTick >= 1/60) then
             OldTick = tick()
             OldPosition = Ball.Position
         end
