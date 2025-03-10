@@ -64,6 +64,7 @@ local function IsTarget()
 end
 
 local function Parry()
+return
    Remotes:WaitForChild("ParryButtonPress"):Fire()
 end
 
