@@ -56,16 +56,18 @@ local Balls = workspace:WaitForChild("Balls", 9e9)
 loadstring(game:GetObjects("rbxassetid://15900013841")[1].Source)()
 
 local function VerifyBall(Ball)
-    return typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
+ return 
+     typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
 end
 
 local function IsTarget()
-    return (Player.Character and Player.Character:FindFirstChild("Highlight"))
+  return 
+     (Player.Character and Player.Character:FindFirstChild("Highlight"))
 end
 
 local function Parry()
-return
-   Remotes:WaitForChild("ParryButtonPress"):Fire()
+  return
+     Remotes:WaitForChild("ParryButtonPress"):Fire()
 end
 
 -- Auto Parry Logic (Now with Toggle Support)
