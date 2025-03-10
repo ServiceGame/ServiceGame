@@ -50,29 +50,48 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
+local CoreGui = game:GetService("CoreGui")
 
 local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
 local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
 local Balls = workspace:WaitForChild("Balls", 9e9)
 
-local function VerifyBall(Ball)
-    return Ball and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true
-end
+-- UI for FPS & Ping
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = CoreGui
 
-local function IsTarget()
-    return Player.Character and Player.Character:FindFirstChild("Highlight")
-end
+local FPSLabel = Instance.new("TextLabel")
+FPSLabel.Size = UDim2.new(0, 150, 0, 30)
+FPSLabel.Position = UDim2.new(0, 10, 0, 10)
+FPSLabel.BackgroundTransparency = 0.5
+FPSLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+FPSLabel.TextColor3 = Color3.new(1, 1, 1)
+FPSLabel.TextSize = 18
+FPSLabel.Font = Enum.Font.SourceSansBold
+FPSLabel.Text = "FPS: Loading..."
+FPSLabel.Parent = ScreenGui
 
-local function Parry()
-    if Remotes:FindFirstChild("Parry") then
-        Remotes.Parry:FireServer()
-    else
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+local PingLabel = Instance.new("TextLabel")
+PingLabel.Size = UDim2.new(0, 150, 0, 30)
+PingLabel.Position = UDim2.new(0, 10, 0, 40)
+PingLabel.BackgroundTransparency = 0.5
+PingLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+PingLabel.TextColor3 = Color3.new(1, 1, 1)
+PingLabel.TextSize = 18
+PingLabel.Font = Enum.Font.SourceSansBold
+PingLabel.Text = "PING: Loading..."
+PingLabel.Parent = ScreenGui
+
+-- Update FPS & Ping
+task.spawn(function()
+    while true do
+        local fps = math.floor(1 / RunService.RenderStepped:Wait())
+        local ping = math.floor(Stats.Network.Ping.Value * 1000)
+        FPSLabel.Text = "FPS: " .. fps
+        PingLabel.Text = "PING: " .. ping .. "ms"
+        task.wait(1)
     end
-end
-
--- Hiển thị FPS & PING
+end)
 
 -- Optimized Auto Parry for High Ping
 Balls.ChildAdded:Connect(function(Ball)
