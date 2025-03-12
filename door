@@ -38,11 +38,11 @@ local function createToggle(tab, name, callback)
     })
 end
 
-createToggle(Tab, "Toggle Doors ESP", function(state) espDoorsEnabled = state end)
-createToggle(Tab, "Toggle Keys ESP", function(state) espKeysEnabled = state end)
-createToggle(Tab, "Toggle Levers ESP", function(state) espLeversEnabled = state end)
-createToggle(Tab, "Toggle Locks ESP", function(state) espLocksEnabled = state end)
-createToggle(Tab, "Toggle Speed +30%", function(state) 
+createToggle(Tab, "Doors ESP", function(state) espDoorsEnabled = state end)
+createToggle(Tab, "Keys ESP (maybe not work)", function(state) espKeysEnabled = state end)
+createToggle(Tab, "Levers ESP", function(state) espLeversEnabled = state end)
+createToggle(Tab, "Locks ESP", function(state) espLocksEnabled = state end)
+createToggle(Tab, "Speed Boost +30%", function(state) 
     speedBoostEnabled = state 
     if speedBoostEnabled then
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed * 1.3
@@ -50,7 +50,7 @@ createToggle(Tab, "Toggle Speed +30%", function(state)
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed / 1.3
     end
 end)
-createToggle(Tab, "Toggle Light Boost", function(state) 
+createToggle(Tab, "FullBright", function(state) 
     lightBoostEnabled = state 
     game.Lighting.Brightness = lightBoostEnabled and 2 or 1
     game.Lighting.GlobalShadows = not lightBoostEnabled
