@@ -27,18 +27,6 @@ local espBoxEnabled = false
 local speedBoostEnabled = false
 local lightBoostEnabled = false
 
--- Функция для создания переключателей
-local function createToggle(tab, name, callback)
-    tab:CreateToggle({
-        Name = name,
-        CurrentValue = false,
-        Flag = name:gsub(" ", "_"),
-        Callback = function(state)
-            callback(state)
-        end
-    })
-end
-
 -- Функции переключения
 local function toggleEspBox(state)
     espBoxEnabled = state
