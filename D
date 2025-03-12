@@ -39,118 +39,24 @@ local function createToggle(tab, name, callback)
     })
 end
 
--- Функции переключения
-local function toggleEspBox(state)
-    espBoxEnabled = state
-    print("ESP Box " .. (espBoxEnabled and "enabled" or "disabled"))
-end
-
-local function toggleEspDoors(state)
-    espDoorsEnabled = state
-    print("ESP for doors " .. (espDoorsEnabled and "enabled" or "disabled"))
-end
-
-local function toggleEspKeys(state)
-    espKeysEnabled = state
-    print("ESP for keys " .. (espKeysEnabled and "enabled" or "disabled"))
-end
-
-local function toggleEspLevers(state)
-    espLeversEnabled = state
-    print("ESP for levers " .. (espLeversEnabled and "enabled" or "disabled"))
-end
-
-local function toggleEspLocks(state)
-    espLocksEnabled = state
-    print("ESP for locks " .. (espLocksEnabled and "enabled" or "disabled"))
-end
-
-local function toggleSpeedBoost(state)
-    speedBoostEnabled = state
+-- Добавляем кнопки в UI
+createToggle(Tab, "Toggle Doors ESP", function(state) espDoorsEnabled = state end)
+createToggle(Tab, "Toggle Keys ESP", function(state) espKeysEnabled = state end)
+createToggle(Tab, "Toggle Levers ESP", function(state) espLeversEnabled = state end)
+createToggle(Tab, "Toggle Locks ESP", function(state) espLocksEnabled = state end)
+createToggle(Tab, "Toggle Speed +30%", function(state) 
+    speedBoostEnabled = state 
     if speedBoostEnabled then
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed * 1.3
     else
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed / 1.3
     end
-end
-
-local function toggleLightBoost(state)
-    lightBoostEnabled = state
+end)
+createToggle(Tab, "Toggle Light Boost", function(state) 
+    lightBoostEnabled = state 
     game.Lighting.Brightness = lightBoostEnabled and 2 or 1
     game.Lighting.GlobalShadows = not lightBoostEnabled
-end
-
--- Функции для включения/выключения ESP
-local function toggleEspDoors()
-    espDoorsEnabled = not espDoorsEnabled
-    if espDoorsEnabled then
-        print("ESP for doors enabled")
-    else
-        print("ESP for doors disabled")
-    end
-end
-
-local function toggleEspKeys()
-    espKeysEnabled = not espKeysEnabled
-    if espKeysEnabled then
-        print("ESP for keys enabled")
-    else
-        print("ESP for keys disabled")
-    end
-end
-
-local function toggleEspLevers()
-    espLeversEnabled = not espLeversEnabled
-    if espLeversEnabled then
-        print("ESP for levers enabled")
-    else
-        print("ESP for levers disabled")
-    end
-end
-
-local function toggleEspLocks()
-    espLocksEnabled = not espLocksEnabled
-    if espLocksEnabled then
-        print("ESP for locks enabled")
-    else
-        print("ESP for locks disabled")
-    end
-end
-
--- Создание кнопок для включения/выключения ESP
-createToggle("Toggle Doors ESP", toggleEspDoors)
-createToggle("Toggle Keys ESP", toggleEspKeys)
-createToggle("Toggle Levers ESP", toggleEspLevers)
-createToggle("Toggle Locks ESP", toggleEspLocks)
-
--- Функции для активации SpeedBoost и LightBoost
-local function toggleSpeedBoost()
-    speedBoostEnabled = not speedBoostEnabled
-    if speedBoostEnabled then
-        print("Speed Boost enabled")
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed * 1.3
-    else
-        print("Speed Boost disabled")
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed / 1.3
-    end
-end
-
-local function toggleLightBoost()
-    lightBoostEnabled = not lightBoostEnabled
-    if lightBoostEnabled then
-        print("Light Boost enabled")
-        game.Lighting.Brightness = 2
-        game.Lighting.GlobalShadows = false
-    else
-        print("Light Boost disabled")
-        game.Lighting.Brightness = 1
-        game.Lighting.GlobalShadows = true
-    end
-end
-
--- Добавляем кнопки для SpeedBoost и LightBoost
-createToggle("Toggle Speed +30%", toggleSpeedBoost)
-createToggle("Toggle Light Boost", toggleLightBoost)
+end)
 
 -- Функция для создания ESP
 local function createESP(part, labelText)
@@ -188,9 +94,8 @@ end
 -- Основной цикл для обновления ESP
 spawn(function()
     while true do
-        removeESP()  -- Удаляем старые обводки перед обновлением
+        removeESP()
 
-        -- Обводка дверей
         if espDoorsEnabled then
             for i = 0, 100 do
                 local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
@@ -200,13 +105,11 @@ spawn(function()
             end
         end
 
-        -- Обводка ключей
         if espKeysEnabled then
             for i = 0, 100 do
                 local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
                 if room and room:FindFirstChild("Assets") then
                     local assets = room.Assets
-
                     if assets:FindFirstChild("Table") and assets.Table:FindFirstChild("DrawerContainer") and assets.Table.DrawerContainer:FindFirstChild("KeyObtain") then
                         local key = assets.Table.DrawerContainer.KeyObtain
                         if key:FindFirstChild("Hitbox") and key.Hitbox:FindFirstChild("KeyHitbox") then
@@ -217,7 +120,6 @@ spawn(function()
             end
         end
 
-        -- Обводка рычагов
         if espLeversEnabled then
             for i = 0, 100 do
                 local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
@@ -227,7 +129,6 @@ spawn(function()
             end
         end
 
-        -- Обводка замков дверей
         if espLocksEnabled then
             for i = 0, 100 do
                 local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
@@ -237,6 +138,6 @@ spawn(function()
             end
         end
 
-        wait(0.5)  -- Обновление каждые 0.5 секунд
+        wait(0.5)
     end
 end)
