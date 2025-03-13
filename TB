@@ -1,0 +1,84 @@
+local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+
+local window = DrRayLibrary:Load("The Butchery [HORROR] - Free - 🔪🐖", "Default")
+
+local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
+
+tab.newLabel("Another Op Script For Free :D")
+
+tab.newButton("Highlight Monsters","Esp/Chams", function()
+local DepthMode = "AlwaysOnTop"
+local FillTransparency = 0.5
+local OutlineTransparency = 0.5
+local CoreGui = game:FindService("CoreGui")
+local Workspace = game.Workspace
+local Storage = Instance.new("Folder")
+Storage.Parent = CoreGui
+Storage.Name = "Highlight_Storage"
+
+local function HighlightModel(name, fillColor, outlineColor)
+for _, model in ipairs(Workspace:GetDescendants()) do
+if model:IsA("Model") and model.Name:lower() == name:lower() then
+local Highlight = Instance.new("Highlight")
+Highlight.Name = model.Name
+Highlight.FillColor = fillColor
+Highlight.DepthMode = DepthMode
+Highlight.FillTransparency = FillTransparency
+Highlight.OutlineColor = outlineColor
+Highlight.OutlineTransparency = OutlineTransparency
+Highlight.Parent = Storage
+Highlight.Adornee = model
+end
+end
+end
+
+HighlightModel("PigMonster", Color3.fromRGB(252, 215, 222), Color3.fromRGB(252, 215, 222))
+HighlightModel("CowMonster1", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster2", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster3", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster4", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster5", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster6", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster7", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster8", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+HighlightModel("CowMonster9", Color3.fromRGB(204, 102, 0), Color3.fromRGB(204, 102, 0))
+end)
+
+tab.newButton("Immortal","Immortal Player", function()
+game.ReplicatedStorage.EnemyEvents.EnemyRaycastEvent:Destroy()
+end)
+
+local tab = DrRayLibrary.newTab("Tools", "ImageIdHere")
+
+tab.newButton("Get All Items","All Stuff", function()
+local itemsFolder = workspace._Items
+
+for _, item in pairs(itemsFolder:GetChildren()) do
+local args = { [1] = item }
+game:GetService("ReplicatedStorage").InventoryEvents.PickUpItemEvent:FireServer(unpack(args))
+end
+end)
+
+local itemsFolder = workspace._Items
+local items = {}
+local selectedItem = ""
+
+for _, item in pairs(itemsFolder:GetChildren()) do
+table.insert(items, item.Name)
+end
+
+local dropdown = tab.newDropdown("Items", "Select an item", items, function(option)
+selectedItem = option
+end)
+
+local input = tab.newInput("Items Input", "Set A Value Number For Item", function(amount)
+for i = 1, tonumber(amount) do
+local args = {[1] = itemsFolder:FindFirstChild(selectedItem)}
+game:GetService("ReplicatedStorage").InventoryEvents.PickUpItemEvent:FireServer(unpack(args))
+end
+end)
+
+local button = tab.newButton("Get Item", "Get Selected Item", function()
+local args = {[1] = itemsFolder:FindFirstChild(selectedItem)}
+game:GetService("ReplicatedStorage").InventoryEvents.PickUpItemEvent:FireServer(unpack(args))
+end)
