@@ -4,7 +4,7 @@ local window = DrRayLibrary:Load("ServiceGame - The Butchery [HORROR]", "Default
 
 local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
 
-tab.newLabel("Another Op Script For Free :D")
+tab.newLabel("Welcome to ServiceGame")
 
 tab.newButton("Highlight Monsters","Esp/Chams", function()
 local DepthMode = "AlwaysOnTop"
