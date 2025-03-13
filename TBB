@@ -1,6 +1,6 @@
 local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
 
-local window = DrRayLibrary:Load("The Butchery [HORROR] - Free - 🔪🐖", "Default")
+local window = DrRayLibrary:Load("ServiceGame - The Butchery [HORROR]", "Default")
 
 local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
 
